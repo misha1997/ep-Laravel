@@ -14,13 +14,21 @@ class CreateUsersTable extends Migration
     public function up()
     {
         Schema::create('users', function (Blueprint $table) {
-            $table->bigIncrements('id');
-            $table->string('name');
+            $table->engine = 'InnoDB';
+            $table->increments('id');
             $table->string('email')->unique();
-            $table->timestamp('email_verified_at')->nullable();
             $table->string('password');
+            $table->string('name');
+            $table->string('surname');
+            $table->string('role');
+            $table->integer('department_id')->unsigned();
             $table->rememberToken();
             $table->timestamps();
+        });
+        
+        Schema::table('users', function (Blueprint $table) {
+            $table->index('department_id');
+            $table->foreign('department_id')->references('department_id')->on('departments');
         });
     }
 
@@ -31,6 +39,8 @@ class CreateUsersTable extends Migration
      */
     public function down()
     {
+        DB::statement('SET FOREIGN_KEY_CHECKS = 0');
         Schema::dropIfExists('users');
+        DB::statement('SET FOREIGN_KEY_CHECKS = 1');
     }
 }
