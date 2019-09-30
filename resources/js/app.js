@@ -26,10 +26,8 @@ import CyclesComponent from './components/CyclesComponent';
 import CategoriesComponent from './components/CategoriesComponent';
 import DepartmentsComponent from './components/DepartmentsComponent';
 import SubCategoriesComponent from './components/SubCategoriesComponent';
-// import DetailComponent from './components/EducationPlan/DetailComponent';
-import TableComponent from './components/EducationPlan/TableComponent';
 import SubdivisionsComponent from './components/SubdivisionsComponent';
-import SubjectsListComponent from './components/SubjectsListComponent';
+import SubjectsComponent from './components/SubjectsListComponent';
 import UsersComponent from './components/UsersComponent';
 
 window.Vuetify = require('vuetify');
@@ -62,10 +60,8 @@ const app = new Vue({
     CategoriesComponent,
     DepartmentsComponent,
     SubCategoriesComponent,
-    // DetailComponent,
-    TableComponent,
     SubdivisionsComponent,
-    SubjectsListComponent,
+    SubjectsComponent,
     UsersComponent
   },
   store,

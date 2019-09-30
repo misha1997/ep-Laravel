@@ -17,6 +17,8 @@ class DatabaseSeeder extends Seeder
             SubCategoriesTableSeeder::class,
             SubdivisionsTableSeeder::class,
             DepartmentsTableSeeder::class,
+            UsersTableSeeder::class,
+            PlansTableSeeder::class,
             SubjectsTableSeeder::class
         ]);
     }

@@ -4,7 +4,6 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use App\Models\Categories;
-use App\Models\Cycles;
 
 class CategoriesController extends Controller
 {
@@ -24,8 +23,6 @@ class CategoriesController extends Controller
         $categories->credits = $request->credits;
         $categories->cycles_id = $request->cycles_id;
         $categories->save();
-        $categories->cycles = Cycles::find($request->cycles_id);
-        return $categories;
     }
     public function putCategories(Request $request, $id)
     {

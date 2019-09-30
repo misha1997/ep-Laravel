@@ -22,7 +22,6 @@ class CyclesController extends Controller
         $cycles->name = $request->name;
         $cycles->credits = $request->credits;
         $cycles->save();
-        return $cycles;
     }
     public function putCycles(Request $request, $id)
     {

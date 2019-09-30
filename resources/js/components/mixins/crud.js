@@ -80,10 +80,9 @@ export default {
         })
       } else {
         axios.post(this.apiUrl, this.editedItem)
-          .then((response)=>{
-            this.data.push(response.data);
+          .then(()=>{
+            this.fetchData();
             this.showMessage("Запис був збережений");
-            this.$refs.form.reset();
           })
           .catch((err)=>{
             this.showError(err);

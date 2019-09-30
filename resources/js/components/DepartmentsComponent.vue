@@ -1,24 +1,32 @@
 <template>
   <div>
     <v-toolbar dark color="primary">
-      <v-toolbar-title>Цикли навчального плану</v-toolbar-title>
+      <v-toolbar-title>Кафедри</v-toolbar-title>
       <v-spacer></v-spacer>
       <v-dialog v-model="dialog" max-width="500px">
         <v-btn slot="activator" icon color="primary" dark class="mb-2"> <v-icon title="Додати">add</v-icon></v-btn>
-        <v-form ref="form">
+        <v-form ref="form" @submit.prevent="save()">
           <v-card>
             <v-card-title>
-              <span class="headline">ddfsd</span>
+              <span class="headline">{{ formTitle }}</span>
             </v-card-title>
 
             <v-card-text>
               <v-container grid-list-md>
                 <v-layout wrap>
                   <v-flex xs12>
-                    <v-text-field label="Назва циклу"></v-text-field>
+                    <v-text-field v-model="editedItem.name" label="Назва кафедри" :rules="requiredField"></v-text-field>
                   </v-flex>
                   <v-flex xs12>
-                    <v-text-field label="Кількість кредитів" type="number"></v-text-field>
+                    <v-select
+                      :rules="requiredField"
+                      :items="subdivisions"
+                      v-model="editedItem.subdivision_id"
+                      item-text="name"
+                      item-value="subdivision_id"
+                      label="Факультет"
+                      required
+                    ></v-select>
                   </v-flex>
                 </v-layout>
               </v-container>
@@ -26,7 +34,7 @@
 
             <v-card-actions>
               <v-spacer></v-spacer>
-              <v-btn color="blue darken-1" flat>Відміна</v-btn>
+              <v-btn color="blue darken-1" flat @click="close">Відміна</v-btn>
               <v-btn color="blue darken-1" type="submit" flat>Зберегти</v-btn>
             </v-card-actions>
           </v-card>
@@ -36,23 +44,28 @@
 
     <v-data-table
       :headers="headers"
+      :items="data"
+      :rows-per-page-items="rowsPerPageItems"
       rows-per-page-text="Кількість рядків на сторінці"
       class="elevation-1"
     >
-      <template>
-        <td>name</td>
-        <td>credits</td>
+      <template slot="items" slot-scope="props">
+        <td>{{ props.item.name }}</td>
+        <td>{{ props.item.subdivisions.name }}</td>
         <td class="justify-center layout px-1 pr-4">
           <v-icon
           title="Редагувати"
             small
+
             class="mr-2"
+            @click="editItem(props.item)"
           >
             edit
           </v-icon>
           <v-icon
           title="Видалити"
             small
+            @click="deleteItem(props.item)"
           >
             delete
           </v-icon>
@@ -66,29 +79,58 @@
 </template>
 
 <script>
+  import crud from './mixins/crud';
+  import validation from './mixins/validation';
+
   export default{
-    data(){
-      return{
+
+    mixins: [validation, crud],
+
+    data() {
+      return {
+        apiUrl: 'department',
+        primaryKey: 'department_id',
+
+        subdivisions: [],
+
         headers: [
-          { text: 'Назва циклу', value: 'name' },
-          { text: 'Кількість кредитів', value: 'credits' },
+          { text: 'Назва кафедри', value: 'name' },
+          { text: 'Назва факультету', value: 'subdivision' },
           { text: '', value: 'name', sortable: false }
         ],
+
+        editedItem: {
+          name: '',
+          subdivision_id: ''
+
+        },
+        defaultItem: {
+          name: '',
+          subdivision_id: ''
+        }
       }
     },
 
     created(){
-
-    },
-
-    filters: {
-
+      this.fetchData(); 
+      this.getSubdivisions();
     },
 
     computed: {
-
+      formTitle () {
+        return this.editedIndex === -1 ? 'Нова кафедра' : 'Редагувати кафедру'
+      },
+      getRequestId(){
+        return this.editedItem.department_id;
+      }
+    },
+    methods: {
+      getSubdivisions() {
+        axios.get('subdivision').then(response => {
+          this.subdivisions = response.data;
+        })
+      }
     }
   }
-
 
 </script>
