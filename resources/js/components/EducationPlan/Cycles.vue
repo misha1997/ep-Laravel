@@ -21,7 +21,6 @@
   import {mapGetters, mapActions} from 'vuex';
   import { EventBus } from '../../event-bus.js';
   import Subject from './Stage/Subject';
-  import Api from '../../services/Api';
 
   export default{
 
@@ -30,7 +29,7 @@
     },
 
     props: {
-      cycles: {
+      cycle: {
         type: Object,
         required: true
       },
@@ -63,7 +62,7 @@
 
       stageItems(){
         return _.filter(this.getEducationItems, (item) => {
-          return item.cycles_id === this.cycles.cycles_id;
+          return item.cycles_id === this.cycle.cycles_id;
         })
       }
     },
@@ -74,7 +73,7 @@
       }),
 
       addSubject(){
-        Api().get(`cycles/${this.cycles.cycles_id}`)
+        axios.get(`cycles/${this.cycles.cycles_id}`)
           .then((response)=>{
             EventBus.$emit('toggle-item-form', _.sumBy(this.stageItems, (item) => { return (item.choice == 0) ? item.credits : 0 }), response.data[0].credits);
             this.createEducationItemCycle({

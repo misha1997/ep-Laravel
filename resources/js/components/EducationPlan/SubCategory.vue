@@ -21,7 +21,6 @@
   import {mapGetters, mapActions} from 'vuex';
   import { EventBus } from '../../event-bus.js';
   import Subject from './Stage/Subject';
-  import Api from '../../services/Api';
 
   export default{
 
@@ -74,7 +73,7 @@
       }),
 
       addSubject(){
-        Api().get(`categories/${this.subCategory.category_id}`)
+        axios.get(`categories/${this.subCategory.category_id}`)
           .then(res => {
             let cycleId = res.data.map((cycles) => {return cycles.cycles_id});
             let credits = res.data.map((cycles) => {return cycles.credits});

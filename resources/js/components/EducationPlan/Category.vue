@@ -21,7 +21,6 @@
   import {mapGetters, mapActions} from 'vuex';
   import { EventBus } from '../../event-bus.js';
   import Subject from './Stage/Subject';
-  import Api from '../../services/Api';
 
   export default{
 
@@ -74,7 +73,7 @@
       }),
 
       addSubject(){
-        Api().get(`categories/${this.category.category_id}`)
+        axios.get(`categories/${this.category.category_id}`)
           .then((response)=>{
             EventBus.$emit('toggle-item-form', _.sumBy(this.stageItems, (item) => { return (item.choice == 0) ? item.credits : 0 } ), response.data[0].credits);
             this.createEducationItemCategory({

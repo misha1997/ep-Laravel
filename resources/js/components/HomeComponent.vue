@@ -1,6 +1,6 @@
 <template>
   <div>
-    <!-- <PlanControls></PlanControls> -->
+    <PlanControls></PlanControls>
     <v-toolbar dark color="primary">
       <v-toolbar-title>Навчальні плани</v-toolbar-title>
       <v-spacer></v-spacer>
@@ -157,7 +157,7 @@
           <v-icon
             title="Відкрити"
             small
-            @click="viewItem('/education-plan/' + props.item.id)"
+            @click="viewItem('/' + props.item.id)"
           >
             remove_red_eye
           </v-icon>
@@ -298,10 +298,6 @@
           .then((response) => {
             EventBus.$emit('toggle-plan-controls-form', item.id, response.data);
           })
-          .catch((err) => {
-            console.log(err);
-          })
-
       },
 
       viewItem(link){

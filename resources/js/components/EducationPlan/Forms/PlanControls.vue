@@ -15,24 +15,24 @@
               Сума годин за другий, третій, четвертий курс не повинна перевищувати 20 годин
             </v-alert>
             <v-container grid-list-md class="py-0">
-              <table class="table table-bordered text-center">
+              <table class="table table-bordered text-center" cellspacing='0'>
                 <tr>
                   <td colspan="16">Розподіл годин на тиждень за курсами, семестрами і модульними атестаційними циклами </td>
                 </tr>
                 <tr>
-                  <td colspan="4" v-for="index in 4">{{ index }} курс</td>
+                  <td colspan="4" v-for="index in 4" :key="'course'+index">{{ index }} курс</td>
                 </tr>
                 <tr>
                   <td colspan="16">Семестри</td>
                 </tr>
                 <tr>
-                  <td colspan="2" v-for="index in 8">{{ index }}</td>
+                  <td colspan="2" v-for="index in 8" :key="'semester'+index">{{ index }}</td>
                 </tr>
                 <tr>
                   <td colspan="16">Кількість годин на тиждень</td>
                 </tr>
                 <tr>
-                  <td v-for="item in hoursWeek">
+                  <td v-for="(item, index) in hoursWeek" :key="'hour'+index">
                     <v-text-field v-model="item.hours_week" type="number" min="0"  :label="item.label">
                     </v-text-field>
                   </td>
@@ -42,7 +42,7 @@
                   <td colspan="16">Кількість екзаменів</td>
                 </tr>
                 <tr>
-                  <td v-for="item in credit">
+                  <td v-for="(item, index) in credit" :key="'credit'+index">
                     <v-text-field v-model="item.credit" type="number" min="0" :label="item.label">
                     </v-text-field>
                   </td>
@@ -52,7 +52,7 @@
                   <td colspan="16">Кількість курсових робіт</td>
                 </tr>
                 <tr>
-                  <td v-for="item in courseWork">
+                  <td v-for="(item, index) in courseWork" :key="'courseWork'+index">
                     <v-text-field v-model="item.course_work" type="number" min="0" :label="item.label">
                     </v-text-field>
                   </td>
@@ -62,7 +62,7 @@
                   <td colspan="16">Кількість контрольних робіт</td>
                 </tr>
                 <tr>
-                  <td v-for="item in сontrolWork">
+                  <td v-for="(item, index) in сontrolWork" :key="'сontrolWork'+index">
                     <v-text-field v-model="item.сontrol_work" type="number" min="0" :label="item.label">
                     </v-text-field>
                   </td>
@@ -86,11 +86,15 @@
   import {mapGetters, mapMutations} from 'vuex';
 
   import {EventBus} from "../../../event-bus";
+  import snackbar from '../../mixins/withSnackbar';
 
 
   const ROMAN_NUMBERS = ["I", "II", "III", "IV"]
 
   export default {
+
+    mixins: [snackbar],
+
     data(){
       return {
         dialog: false,
@@ -107,17 +111,16 @@
       this.initData();
 
       EventBus.$on('toggle-plan-controls-form', (id, data) => {
-        console.log('aaaaaaaa')
-        // this.educationPlanId = id;
-        // this.dialog = !this.dialog;
-        // if(!_.isEmpty(data)){
-        //   _.forEach(data, (item) => {
-        //     this.hoursWeek[item.module_number - 1].hours_week = (item.hours_week == 0) ? '' : item.hours_week;
-        //     this.credit[item.module_number - 1].credit = (item.credit == 0) ? '' : item.credit;
-        //     this.courseWork[item.module_number - 1].course_work = (item.course_work == 0) ? '' : item.course_work;
-        //     this.сontrolWork[item.module_number - 1].сontrol_work = (item.сontrol_work == 0) ? '' : item.сontrol_work;
-        //   })
-        // }
+        this.educationPlanId = id;
+        this.dialog = !this.dialog;
+        if(!_.isEmpty(data)){
+          _.forEach(data, (item) => {
+            this.hoursWeek[item.module_number - 1].hours_week = (item.hours_week == 0) ? '' : item.hours_week;
+            this.credit[item.module_number - 1].credit = (item.credit == 0) ? '' : item.credit;
+            this.courseWork[item.module_number - 1].course_work = (item.course_work == 0) ? '' : item.course_work;
+            this.сontrolWork[item.module_number - 1].сontrol_work = (item.сontrol_work == 0) ? '' : item.сontrol_work;
+          })
+        }
       });
     },
     computed: {
@@ -197,11 +200,10 @@
           controls
         })
         .then((response) => {
-          this.dialog = false;
-          successAlert("Запис був збережений");
+          this.showMessage('Запис був збережений');
         })
         .catch((err) => {
-          console.log(err);
+          this.showError(err);
         })
 
       }
@@ -228,4 +230,52 @@
   input::-webkit-inner-spin-button {
     -webkit-appearance: none;
   }
+.table-bordered {
+  border: 1px solid #dee2e6;
+}
+
+.table-bordered th,
+.table-bordered td {
+  border: 1px solid #dee2e6;
+}
+
+.table-bordered thead th,
+.table-bordered thead td {
+  border-bottom-width: 2px;
+}
+.text-center {
+  text-align: center !important;
+}
+.table {
+  font-size: 14px;
+  color: #000;
+  border: 0;
+  width: 100%;
+  margin-bottom: 1rem;
+  background-color: transparent;
+}
+
+.table th,
+.table td {
+  padding: 0.75rem;
+  vertical-align: top;
+  border-top: 1px solid #dee2e6;
+}
+
+.table thead th {
+  vertical-align: bottom;
+  border-bottom: 2px solid #dee2e6;
+}
+.table tbody + tbody {
+  border-top: 2px solid #dee2e6;
+}
+
+.table .table {
+  background-color: #fff;
+}
+
+.table-sm th,
+.table-sm td {
+  padding: 0.3rem;
+}
 </style>

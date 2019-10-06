@@ -9,7 +9,7 @@
 
 <script>
   import {mapGetters} from 'vuex';
-  import Api from '../../services/Api';
+
   export default{
     data(){
       return {

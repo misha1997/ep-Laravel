@@ -20,7 +20,7 @@
             fixed
             clipped
             app
-            width="250"
+            width="220"
             v-model="drawer"
     >
         <v-list dense>

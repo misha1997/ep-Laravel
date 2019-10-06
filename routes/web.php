@@ -1,20 +1,15 @@
 <?php
 
-Route::get('/', 'PlansController@index')->name('plans');
-Route::get('/cycles', 'CyclesController@index')->name('cycles');
-Route::get('/categories', 'CategoriesController@index')->name('categories');
-Route::get('/sub-categories', 'SubCategoriesController@index')->name('sub-categories');
-Route::get('/subdivisions', 'SubdivisionsController@index')->name('subdivisions');
-Route::get('/departments', 'DepartmentsController@index')->name('departments');
-Route::get('/subjects', 'SubjectsController@index')->name('subjects');
-
 // Плани
 Route::get('plan', 'PlansController@getPlans');
 Route::post('plan', 'PlansController@postPlans');
 Route::post('plan/{id}/', 'PlansController@putPlans');
 Route::delete('plan/{id}/', 'PlansController@deletePlans');
+Route::get('plan/{id}/', 'PlansController@getPlanId');
 
 Route::get('plan-controls/{id}/', 'PlansController@getPlanControls');
+Route::post('plan-controls', 'PlansController@postPlanControls');
+Route::get('plan-items/{id}/', 'PlansController@getPlanItems');
 
 // Цикли
 Route::get('cycle', 'CyclesController@getCycles');
@@ -52,5 +47,7 @@ Route::get('subject', 'SubjectsController@getSubjects');
 Route::post('subject', 'SubjectsController@postSubjects');
 Route::post('subject/{id}/', 'SubjectsController@putSubjects');
 Route::delete('subject/{id}/', 'SubjectsController@deleteSubjects');
+
+Route::get('/{any}', 'HomeController@index')->where('any', '.*');
 
 Auth::routes();

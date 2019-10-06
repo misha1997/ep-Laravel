@@ -67,11 +67,9 @@
   import {mapGetters, mapMutations, mapActions} from 'vuex';
 
   import {EventBus} from "../../../event-bus";
-  import {successAlert, errorAlert} from '../../../services/Swal';
-  import Api from '../../../services/Api';
 
-  import crud from '../../../mixins/crud';
-  import validation from '../../../mixins/validation';
+  import crud from '../../mixins/crud';
+  import validation from '../../mixins/validation';
 
   export default{
 
@@ -151,7 +149,7 @@
       }),
 
       fetchSubjects() {
-        Api().get('subjects')
+        axios.get('subjects')
           .then((response)=>{
             this.subjects = _.map(response.data, (item)=>{
               return{
@@ -173,7 +171,7 @@
         if (this.editedIndex > -1) {
           Object.assign(this.data[this.editedIndex], this.editedItem);
           this.enableLoading();
-          Api().put(`${this.apiUrl}/${this.getRequestId}`,{
+          axios.put(`${this.apiUrl}/${this.getRequestId}`,{
             name: this.editedItem.name
           })
             .then(()=>{
@@ -188,7 +186,7 @@
 
         } else {
           this.enableLoading();
-          Api().post(this.apiUrl+'/store',Object.assign(this.editedItem, this.additionalData))
+          asios.post(this.apiUrl+'/store',Object.assign(this.editedItem, this.additionalData))
             .then((response)=>{
               response.data.distribution_of_hours = [];
               this.addEducationItem(response.data);

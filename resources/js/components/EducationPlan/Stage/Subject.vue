@@ -1,7 +1,7 @@
 <template>
   <tr>
     <td class="text-center">{{ data.index + 1 }}</td>
-        <td class="text-center">{{ data.item.subject.name }}</td>
+        <td class="text-center">{{ data.item.subjects.name }}</td>
         <td class="text-center">{{ data.item.credits }}</td>
         <td class="text-center">{{ data.item.credits*30 }}</td>
         <td class="text-center">{{ data.item.lectures | zeroValue }}</td>
@@ -13,32 +13,11 @@
             small
             class="mr-2"
             @click="distributionOfLearningForm(data.item.education_item_id)"
-            v-if="isDistributionOfHours && $store.state.role == 'admin'"
-          >
-          school
-          </v-icon>
-          <v-icon
-            title="Лекції/Лабораторні"
-            small
-            class="mr-2"
-            @click="distributionOfLearningForm(data.item.education_item_id)"
-            v-if="isDistributionOfHours && $store.state.role != 'admin' && data.item.fixed == 0"
           >
           school
           </v-icon>
 
-
           <v-icon
-            v-if="$store.state.role == 'admin'"
-            title="Заповнити данні розподілу по модулям" 
-            small
-            class="mr-2"
-            @click="modulesForm(data.item.education_item_id)"
-          >
-          today
-          </v-icon>
-          <v-icon
-            v-if="$store.state.role != 'admin' && data.item.fixed == 0"
             title="Заповнити данні розподілу по модулям" 
             small
             class="mr-2"
@@ -48,15 +27,6 @@
           </v-icon>
 
           <v-icon
-            v-if="$store.state.role == 'admin'"
-            title="Видалити"
-            small
-            @click="deleteItem(data.item)"
-          >
-          delete
-          </v-icon>
-          <v-icon
-            v-if="$store.state.role != 'admin' && data.item.fixed == 0"
             title="Видалити"
             small
             @click="deleteItem(data.item)"
@@ -71,8 +41,6 @@
   import {mapMutations} from 'vuex';
 
   import { EventBus } from '../../../event-bus.js';
-  import Api from '../../../services/Api';
-  import {successAlert, errorAlert} from '../../../services/Swal';
 
   export default {
     props: {
@@ -91,11 +59,11 @@
 
     computed: {
       getDistributionOfHours(){
-        return this.data.item.distribution_of_hours;
+        return this.data.item.hours;
       },
 
       isDistributionOfHours(){
-        return this.getDistributionOfHours.length > 0;
+        return this.hours != null;
       },
 
       amountOfHours(){
@@ -127,7 +95,7 @@
         if(isDelete) {
           this.enableLoading();
 
-          Api().delete(`distribution-of-controls/${item.education_item_id}`)
+          axios.delete(`distribution-of-controls/${item.education_item_id}`)
             .then(() => {
               console.log("distribution-of-controls видалений");
             })
@@ -135,7 +103,7 @@
               console.log(err);
             })
 
-          Api().delete(`distribution-of-hours/${item.education_item_id}`)
+          axios.delete(`distribution-of-hours/${item.education_item_id}`)
             .then(() => {
               console.log("distribution-of-hours видалений");
             })
@@ -143,7 +111,7 @@
               console.log(err);
             })
 
-          Api().delete(`education-item/${item.education_item_id}`)
+          axios.delete(`education-item/${item.education_item_id}`)
             .then(() => {
               this.removeEducationItem(item.education_item_id);
               successAlert("Запис був видалений");
@@ -159,16 +127,17 @@
 
       modulesForm(educationItemId){ 
 
-        Api().post('education-item', {
+        axios.post('education-item', {
           id: this.data.item.education_plans_id
         }).then((res) => {
           var controls = []
+          console.log('aaaaaaaa')
           res.data.educationItems.forEach(elem => {
             elem.distribution_of_hours.forEach(hour => {
               controls.push(hour)
             })
           });
-          Api().get(`plan-controls/${this.data.item.education_plans_id}`).then((controlsPlan)=>{
+          axios.get(`plan-controls/${this.data.item.education_plans_id}`).then((controlsPlan)=>{
             EventBus.$emit('toggle-modules-form', educationItemId, this.getDistributionOfHours, this.data.item.credits, controlsPlan.data, controls);
           });
         })

@@ -94,10 +94,8 @@
   import {mapGetters, mapMutations} from 'vuex';
 
   import {EventBus} from "../../../event-bus";
-  import Api from '../../../services/Api';
-  import Swal from '../../../services/Swal';
 
-  import validation from '../../../mixins/validation';
+  import validation from '../../mixins/validation';
 
   const ROMAN_NUMBERS = ["I", "II", "III", "IV"]
 

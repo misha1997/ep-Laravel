@@ -19,7 +19,9 @@ class DatabaseSeeder extends Seeder
             DepartmentsTableSeeder::class,
             UsersTableSeeder::class,
             PlansTableSeeder::class,
-            SubjectsTableSeeder::class
+            SubjectsTableSeeder::class,
+            PlanItemsTableSeeder::class,
+            DistributionHours::class
         ]);
     }
 }

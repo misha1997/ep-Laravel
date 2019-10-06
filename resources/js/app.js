@@ -1,19 +1,8 @@
-
-/**
- * First we will load all of this project's JavaScript dependencies which
- * includes Vue and other libraries. It is a great starting point when
- * building robust, powerful web applications using Vue and Laravel.
- */
-
 require('./bootstrap');
 
 window.Vue = require('vue');
 
-/**
- * Next, we will create a fresh Vue application instance and attach it to
- * the page. Then, you may begin adding components to this application
- * or customize the JavaScript scaffolding to fit your unique needs.
- */
+import App from './components/App'
 
 import LoginButtonComponent from './components/LoginButtonComponent';
 import RegisterButtonComponent from './components/RegisterButtonComponent';
@@ -21,20 +10,17 @@ import RememberPasswordComponent from './components/RememberPasswordComponent';
 import ResetPasswordComponent from './components/ResetPasswordComponent';
 import SnackBarComponent from './components/SnackBarComponent';
 
-import HomeComponent from './components/HomeComponent';
-import CyclesComponent from './components/CyclesComponent';
-import CategoriesComponent from './components/CategoriesComponent';
-import DepartmentsComponent from './components/DepartmentsComponent';
-import SubCategoriesComponent from './components/SubCategoriesComponent';
-import SubdivisionsComponent from './components/SubdivisionsComponent';
-import SubjectsComponent from './components/SubjectsListComponent';
-import UsersComponent from './components/UsersComponent';
 
 window.Vuetify = require('vuetify');
 import 'vuetify/dist/vuetify.min.css';
 Vue.use(Vuetify)
 
+import VueRouter from 'vue-router';
+
+Vue.use(VueRouter);
+
 import store from './store'
+import router from './routes'
 import * as actions from './store/action-types'
 import * as mutations from './store/mutation-types'
 
@@ -49,22 +35,15 @@ if (window.user) {
 const app = new Vue({
   el: '#app',
   components: {
+    App,
     LoginButtonComponent,
     RegisterButtonComponent,
     RememberPasswordComponent,
     ResetPasswordComponent,
-    SnackBarComponent,
-
-    HomeComponent,
-    CyclesComponent,
-    CategoriesComponent,
-    DepartmentsComponent,
-    SubCategoriesComponent,
-    SubdivisionsComponent,
-    SubjectsComponent,
-    UsersComponent
+    SnackBarComponent
   },
   store,
+  router,
   mixins: [ withSnackbar ],
   data: () => ({
     drawer: null,

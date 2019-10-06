@@ -50,10 +50,8 @@
   import {mapGetters, mapMutations} from 'vuex';
 
   import {EventBus} from "../../../event-bus";
-  import {successAlert, errorAlert} from '../../../services/Swal';
-  import Api from '../../../services/Api';
 
-  import validation from '../../../mixins/validation';
+  import validation from '../../mixins/validation';
 
   export default{
 
