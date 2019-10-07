@@ -1,8 +1,8 @@
 <template>
   <div class="mb-5">
-      <v-btn color="info" class="mx-0 mb-4" @click="viewItem('/education-plan/' + getEducationPlanId)">Повернутись до роботи з планом</v-btn>
+      <v-btn color="info" class="mx-0 mb-4" @click="viewItem('/' + getEducationPlanId)">Повернутись до роботи з планом</v-btn>
       <v-btn color="info" class="mx-0 mb-4" @click="printData()">Друкувати / Завантажити</v-btn>
-    <div class="pb-5" v-html="table"> </div>
+    <div class="pb-5" style="overflow-x: auto" v-html="table"> </div>
 
   </div>
 </template>
@@ -13,16 +13,12 @@
   export default{
     data(){
       return {
-        table: ''
+        table: '',
+        getEducationPlanId: this.$route.params.id
       }
     },
     created(){
       this.getData();
-    },
-    computed:{
-      ...mapGetters({
-        'getEducationPlanId': 'plan/getEducationPlanId'
-      }),
     },
     methods: {
       getData(){
@@ -32,11 +28,9 @@
         var exams = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0];
         var credit = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0];
         var course_work = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0];
-        Api().post('education-item', {
-          id: this.getEducationPlanId
-        }).then((response)=>{
+        axios.get('/plan-items/'+this.getEducationPlanId).then((response)=>{
           response.data.educationItems.forEach(element => {
-            element.distribution_of_hours.forEach(hoursConst => {
+            element.hours.forEach(hoursConst => {
               if(hoursConst.form_control == 'credit' || hoursConst.form_control == 'differscore') {
                 exams[hoursConst.module_number - 1] += 1
               }
@@ -57,7 +51,7 @@
             var distributionControls = [0, 0, 0];
             response.data.educationItems.forEach(function(item, e, educationItems) {
               if(educationItems[e].sub_category_id == null && educationItems[e].category_id == null && educationItems[e].cycles_id == cycles[c].cycles_id) {
-                educationItems[e].distribution_of_hours.forEach(function(item, dh, distribution_of_hours) {
+                educationItems[e].hours.forEach(function(item, dh, distribution_of_hours) {
                   hours[distribution_of_hours[dh].module_number - 1] = distribution_of_hours[dh].value
                   if(distribution_of_hours[dh].individual_tasks != '') {
                     distributionControls[2]++
@@ -73,7 +67,7 @@
                 iter++
                 result.push([
                   iter,
-                  educationItems[e].subject.name, 
+                  educationItems[e].subjects.name, 
                   distributionControls[0],
                   distributionControls[1],
                   distributionControls[2],
@@ -107,7 +101,7 @@
                 var distributionControls = [0, 0, 0];
                 response.data.educationItems.forEach(function(item, e, educationItems) {
                   if(educationItems[e].sub_category_id == null && educationItems[e].category_id == categories[cat].category_id) {
-                    educationItems[e].distribution_of_hours.forEach(function(item, dh, distribution_of_hours) {
+                    educationItems[e].hours.forEach(function(item, dh, distribution_of_hours) {
                       hours[distribution_of_hours[dh].module_number - 1] = distribution_of_hours[dh].value
                       if(distribution_of_hours[dh].individual_tasks != '') {
                         distributionControls[2]++
@@ -123,7 +117,7 @@
                     iter++
                     result.push([
                       iter,
-                      educationItems[e].subject.name, 
+                      educationItems[e].subjects.name, 
                       distributionControls[0],
                       distributionControls[1],
                       distributionControls[2],
@@ -162,17 +156,17 @@
                 for (let i = 0; i < 16; i++) {
                   sumHoursCycles[i] += sumHours[i]
                 }
-                if(categories[cat].sub_categories.length == 0) {
+                if(categories[cat].subcategory.length == 0) {
                   result.push(_.concat([""],["Усього"], sumCategory, sumHours))
                   _.fill(sumCategory, 0);
                   _.fill(sumHours, 0);
                 }
-                categories[cat].sub_categories.forEach(function(item, subCat, sub_categories) {
+                categories[cat].subcategory.forEach(function(item, subCat, sub_categories) {
                   result.push([sub_categories[subCat].name]) // Назва під категорії
                   var distributionControls = [0, 0, 0];
                   response.data.educationItems.forEach(function(item, e, educationItems) {
                     if(educationItems[e].sub_category_id == sub_categories[subCat].sub_category_id) {
-                      educationItems[e].distribution_of_hours.forEach(function(item, dh, distribution_of_hours) {
+                      educationItems[e].hours.forEach(function(item, dh, distribution_of_hours) {
                         hours[distribution_of_hours[dh].module_number - 1] = distribution_of_hours[dh].value
                         if(distribution_of_hours[dh].individual_tasks != '') {
                           distributionControls[2]++
@@ -188,7 +182,7 @@
                       iter++
                       result.push([
                         iter,
-                        educationItems[e].subject.name, 
+                        educationItems[e].subjects.name, 
                         distributionControls[0],
                         distributionControls[1],
                         distributionControls[2],
@@ -263,7 +257,7 @@
               _.fill(sumHoursCycles, 0);
           })
           result.push(_.concat([""],["Загальна кількість"], sumAll, sumHoursAll))
-          Api().get(`plan-controls/${this.getEducationPlanId}`).then((response)=>{
+          axios.get(`/plan-controls/${this.getEducationPlanId}`).then((response)=>{
             response.data.forEach(function(item, cont, controls) {
               hours_week[controls[cont].module_number - 1] = controls[cont].hours_week
               credit[controls[cont].module_number - 1] = controls[cont].credit
@@ -275,9 +269,9 @@
               _.concat([""], ["Кількість заліків"], exams), 
               _.concat([""], ["Кількість курсових робіт"], course_work))
           }).then(() => {
-            Api().get(`education-plan/${this.getEducationPlanId}`).then((response)=>{
+            axios.get(`/plan/${this.getEducationPlanId}`).then((response)=>{
               const dataPlan = {
-                subdivision: response.data[0].department.subdivision.name,
+                subdivision: 'test',
                 year: response.data[0].year,
                 qualification: response.data[0].qualification,
                 discipline: response.data[0].discipline,

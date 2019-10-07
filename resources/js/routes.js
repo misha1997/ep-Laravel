@@ -62,6 +62,11 @@ export default new VueRouter({
       path: '/:id',
       name: 'plan-detail',
       component: Detail,
-    }
+    },
+    {
+      path: '/view/:id',
+      name: 'education-plan-view',
+      component: Table,
+    },
   ]
 });

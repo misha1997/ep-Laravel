@@ -9,7 +9,11 @@ Route::get('plan/{id}/', 'PlansController@getPlanId');
 
 Route::get('plan-controls/{id}/', 'PlansController@getPlanControls');
 Route::post('plan-controls', 'PlansController@postPlanControls');
+Route::post('plan-items', 'PlansController@postPlanItems');
 Route::get('plan-items/{id}/', 'PlansController@getPlanItems');
+Route::delete('plan-items/{id}/', 'PlansController@deletePlanItems');
+Route::post('plan-items/update-learning-plan/{id}/', 'PlansController@updateLearningPlanItems');
+Route::post('distribution-of-hours', 'PlansController@postHoursItems');
 
 // Цикли
 Route::get('cycle', 'CyclesController@getCycles');

@@ -104,31 +104,24 @@
       ...mapMutations({
         'addEducationItem': 'plan/addEducationItem',
         'resetCurrentItem': 'plan/resetCurrentItem',
-        'updateLearningData': 'plan/updateLearningData',
-        'enableLoading': 'overlay/enableLoading',
-        'disableLoading': 'overlay/disableLoading'
+        'updateLearningData': 'plan/updateLearningData'
       }),
 
       save () {
         if(this.validator)
           return;
 
-          this.enableLoading();
-
-            Api().put('education-item/update-learning-plan/'+this.educationItemId,{
+            axios.post('plan-items/update-learning-plan/'+this.educationItemId,{
               lectures: this.editedItem.lectures == "" ? 0 : this.editedItem.lectures,
               laboratories: this.editedItem.laboratories == "" ? 0 : this.editedItem.laboratories
             })
             .then((response)=>{
               this.updateLearningData({educationItemId: this.educationItemId, data: response.data});
-              successAlert("Запис був збережений");
+              console.log("Запис був збережений");
             })
             .catch((err)=>{
-              errorAlert(err);
+              console.log(err);
             })
-            .then(()=>{
-              this.disableLoading();
-            });
 
         this.close()
       },

@@ -282,8 +282,7 @@
             "semester" : Math.ceil(item.module_number/2)
           }
         });
-
-        Api().post('distribution-of-hours/store', {
+        axios.post('distribution-of-hours', {
           educationItemId: this.educationItemId,
           data: formattedData
         })

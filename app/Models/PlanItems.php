@@ -21,6 +21,6 @@ class PlanItems extends Model
 
 	public function hours()
 	{
-		return $this->belongsTo('App\Models\DistributionHours', 'education_item_id');
+		return $this->hasMany('App\Models\DistributionHours', 'education_item_id');
 	}
 }

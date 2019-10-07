@@ -149,7 +149,7 @@
       }),
 
       fetchSubjects() {
-        axios.get('subjects')
+        axios.get('subject')
           .then((response)=>{
             this.subjects = _.map(response.data, (item)=>{
               return{
@@ -160,7 +160,7 @@
             });
           })
           .catch((err)=>{
-            console.log(err);
+            this.showError(err);
           })
       },
 
@@ -170,37 +170,28 @@
 
         if (this.editedIndex > -1) {
           Object.assign(this.data[this.editedIndex], this.editedItem);
-          this.enableLoading();
           axios.put(`${this.apiUrl}/${this.getRequestId}`,{
             name: this.editedItem.name
           })
             .then(()=>{
-              successAlert("Запис був збережений");
+              this.showMessage("Запис був збережений");
             })
             .catch((err)=>{
-              errorAlert(err);
-            })
-            .then(()=>{
-              this.disableLoading();
+              this.showError(err);
             })
 
         } else {
-          this.enableLoading();
-          asios.post(this.apiUrl+'/store',Object.assign(this.editedItem, this.additionalData))
+          axios.post('plan-items', Object.assign(this.editedItem, this.additionalData))
             .then((response)=>{
               response.data.distribution_of_hours = [];
               this.addEducationItem(response.data);
               this.resetCurrentItem();
-              successAlert("Запис був збережений");
               this.$refs.form.reset();
+              this.showMessage("Запис був збережений");
             })
             .catch((err)=>{
-              errorAlert(err);
+              this.showError(err);
             })
-            .then(()=>{
-              this.disableLoading();
-            })
-
         }
         this.close()
       }

@@ -31,7 +31,7 @@ let mutations = {
   },
 
   addEducationItem(state, item){
-    state.educationItems.push(item);
+    state.educationItems.push(item[0]);
   },
 
   updateEducationItem(state, educationItemId, data){

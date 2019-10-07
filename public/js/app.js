@@ -2826,7 +2826,7 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
     fetchSubjects: function fetchSubjects() {
       var _this2 = this;
 
-      axios.get('subjects').then(function (response) {
+      axios.get('subject').then(function (response) {
         _this2.subjects = _.map(response.data, function (item) {
           return {
             choice: item.choice,
@@ -2835,7 +2835,7 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
           };
         });
       })["catch"](function (err) {
-        console.log(err);
+        _this2.showError(err);
       });
     },
     save: function save() {
@@ -2845,32 +2845,26 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
 
       if (this.editedIndex > -1) {
         Object.assign(this.data[this.editedIndex], this.editedItem);
-        this.enableLoading();
         axios.put("".concat(this.apiUrl, "/").concat(this.getRequestId), {
           name: this.editedItem.name
         }).then(function () {
-          successAlert("Запис був збережений");
+          _this3.showMessage("Запис був збережений");
         })["catch"](function (err) {
-          errorAlert(err);
-        }).then(function () {
-          _this3.disableLoading();
+          _this3.showError(err);
         });
       } else {
-        this.enableLoading();
-        asios.post(this.apiUrl + '/store', Object.assign(this.editedItem, this.additionalData)).then(function (response) {
+        axios.post('plan-items', Object.assign(this.editedItem, this.additionalData)).then(function (response) {
           response.data.distribution_of_hours = [];
 
           _this3.addEducationItem(response.data);
 
           _this3.resetCurrentItem();
 
-          successAlert("Запис був збережений");
-
           _this3.$refs.form.reset();
+
+          _this3.showMessage("Запис був збережений");
         })["catch"](function (err) {
-          errorAlert(err);
-        }).then(function () {
-          _this3.disableLoading();
+          _this3.showError(err);
         });
       }
 
@@ -2991,16 +2985,13 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
   methods: _objectSpread({}, Object(vuex__WEBPACK_IMPORTED_MODULE_0__["mapMutations"])({
     'addEducationItem': 'plan/addEducationItem',
     'resetCurrentItem': 'plan/resetCurrentItem',
-    'updateLearningData': 'plan/updateLearningData',
-    'enableLoading': 'overlay/enableLoading',
-    'disableLoading': 'overlay/disableLoading'
+    'updateLearningData': 'plan/updateLearningData'
   }), {
     save: function save() {
       var _this2 = this;
 
       if (this.validator) return;
-      this.enableLoading();
-      Api().put('education-item/update-learning-plan/' + this.educationItemId, {
+      axios.post('plan-items/update-learning-plan/' + this.educationItemId, {
         lectures: this.editedItem.lectures == "" ? 0 : this.editedItem.lectures,
         laboratories: this.editedItem.laboratories == "" ? 0 : this.editedItem.laboratories
       }).then(function (response) {
@@ -3009,11 +3000,9 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
           data: response.data
         });
 
-        successAlert("Запис був збережений");
+        console.log("Запис був збережений");
       })["catch"](function (err) {
-        errorAlert(err);
-      }).then(function () {
-        _this2.disableLoading();
+        console.log(err);
       });
       this.close();
     },
@@ -3374,7 +3363,7 @@ var ROMAN_NUMBERS = ["I", "II", "III", "IV"];
         };
       });
 
-      Api().post('distribution-of-hours/store', {
+      axios.post('distribution-of-hours', {
         educationItemId: this.educationItemId,
         data: formattedData
       }).then(function (response) {
@@ -3729,9 +3718,7 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
   },
   methods: _objectSpread({}, Object(vuex__WEBPACK_IMPORTED_MODULE_0__["mapMutations"])({
     'updateEducationItem': 'plan/updateEducationItem',
-    'removeEducationItem': 'plan/removeEducationItem',
-    'enableLoading': 'overlay/enableLoading',
-    'disableLoading': 'overlay/disableLoading'
+    'removeEducationItem': 'plan/removeEducationItem'
   }), {
     editItem: function editItem() {
       _event_bus_js__WEBPACK_IMPORTED_MODULE_1__["EventBus"].$emit('toggle-item-form', educationItemId);
@@ -3742,38 +3729,22 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
       var isDelete = confirm('Ви впевнені, що хочете видалити цей елемент?');
 
       if (isDelete) {
-        this.enableLoading();
-        axios["delete"]("distribution-of-controls/".concat(item.education_item_id)).then(function () {
-          console.log("distribution-of-controls видалений");
-        })["catch"](function (err) {
-          console.log(err);
-        });
-        axios["delete"]("distribution-of-hours/".concat(item.education_item_id)).then(function () {
-          console.log("distribution-of-hours видалений");
-        })["catch"](function (err) {
-          console.log(err);
-        });
-        axios["delete"]("education-item/".concat(item.education_item_id)).then(function () {
+        axios["delete"]("plan-items/".concat(item.education_item_id)).then(function () {
           _this.removeEducationItem(item.education_item_id);
 
-          successAlert("Запис був видалений");
+          console.log("Запис видалений");
         })["catch"](function (err) {
-          errorAlert(err);
-        }).then(function () {
-          _this.disableLoading();
+          console.log(err);
         });
       }
     },
     modulesForm: function modulesForm(educationItemId) {
       var _this2 = this;
 
-      axios.post('education-item', {
-        id: this.data.item.education_plans_id
-      }).then(function (res) {
+      axios.get('plan-items/' + this.data.item.education_plans_id).then(function (res) {
         var controls = [];
-        console.log('aaaaaaaa');
         res.data.educationItems.forEach(function (elem) {
-          elem.distribution_of_hours.forEach(function (hour) {
+          elem.hours.forEach(function (hour) {
             controls.push(hour);
           });
         });
@@ -3927,12 +3898,6 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
 "use strict";
 __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var vuex__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! vuex */ "./node_modules/vuex/dist/vuex.esm.js");
-function ownKeys(object, enumerableOnly) { var keys = Object.keys(object); if (Object.getOwnPropertySymbols) { var symbols = Object.getOwnPropertySymbols(object); if (enumerableOnly) symbols = symbols.filter(function (sym) { return Object.getOwnPropertyDescriptor(object, sym).enumerable; }); keys.push.apply(keys, symbols); } return keys; }
-
-function _objectSpread(target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i] != null ? arguments[i] : {}; if (i % 2) { ownKeys(source, true).forEach(function (key) { _defineProperty(target, key, source[key]); }); } else if (Object.getOwnPropertyDescriptors) { Object.defineProperties(target, Object.getOwnPropertyDescriptors(source)); } else { ownKeys(source).forEach(function (key) { Object.defineProperty(target, key, Object.getOwnPropertyDescriptor(source, key)); }); } } return target; }
-
-function _defineProperty(obj, key, value) { if (key in obj) { Object.defineProperty(obj, key, { value: value, enumerable: true, configurable: true, writable: true }); } else { obj[key] = value; } return obj; }
-
 //
 //
 //
@@ -3946,15 +3911,13 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
 /* harmony default export */ __webpack_exports__["default"] = ({
   data: function data() {
     return {
-      table: ''
+      table: '',
+      getEducationPlanId: this.$route.params.id
     };
   },
   created: function created() {
     this.getData();
   },
-  computed: _objectSpread({}, Object(vuex__WEBPACK_IMPORTED_MODULE_0__["mapGetters"])({
-    'getEducationPlanId': 'plan/getEducationPlanId'
-  })),
   methods: {
     getData: function getData() {
       var _this = this;
@@ -3965,11 +3928,9 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
       var exams = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0];
       var credit = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0];
       var course_work = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0];
-      Api().post('education-item', {
-        id: this.getEducationPlanId
-      }).then(function (response) {
+      axios.get('/plan-items/' + this.getEducationPlanId).then(function (response) {
         response.data.educationItems.forEach(function (element) {
-          element.distribution_of_hours.forEach(function (hoursConst) {
+          element.hours.forEach(function (hoursConst) {
             if (hoursConst.form_control == 'credit' || hoursConst.form_control == 'differscore') {
               exams[hoursConst.module_number - 1] += 1;
             }
@@ -3990,7 +3951,7 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
           var distributionControls = [0, 0, 0];
           response.data.educationItems.forEach(function (item, e, educationItems) {
             if (educationItems[e].sub_category_id == null && educationItems[e].category_id == null && educationItems[e].cycles_id == cycles[c].cycles_id) {
-              educationItems[e].distribution_of_hours.forEach(function (item, dh, distribution_of_hours) {
+              educationItems[e].hours.forEach(function (item, dh, distribution_of_hours) {
                 hours[distribution_of_hours[dh].module_number - 1] = distribution_of_hours[dh].value;
 
                 if (distribution_of_hours[dh].individual_tasks != '') {
@@ -4006,7 +3967,7 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
                 }
               });
               iter++;
-              result.push([iter, educationItems[e].subject.name, distributionControls[0], distributionControls[1], distributionControls[2], educationItems[e].credits, educationItems[e].credits * 30, _.sum(hours) * 8, educationItems[e].lectures, _.sum(hours) * 8 - educationItems[e].lectures, educationItems[e].laboratories, educationItems[e].credits * 30 - _.sum(hours) * 8]);
+              result.push([iter, educationItems[e].subjects.name, distributionControls[0], distributionControls[1], distributionControls[2], educationItems[e].credits, educationItems[e].credits * 30, _.sum(hours) * 8, educationItems[e].lectures, _.sum(hours) * 8 - educationItems[e].lectures, educationItems[e].laboratories, educationItems[e].credits * 30 - _.sum(hours) * 8]);
 
               _.fill(distributionControls, 0);
 
@@ -4035,7 +3996,7 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
             var distributionControls = [0, 0, 0];
             response.data.educationItems.forEach(function (item, e, educationItems) {
               if (educationItems[e].sub_category_id == null && educationItems[e].category_id == categories[cat].category_id) {
-                educationItems[e].distribution_of_hours.forEach(function (item, dh, distribution_of_hours) {
+                educationItems[e].hours.forEach(function (item, dh, distribution_of_hours) {
                   hours[distribution_of_hours[dh].module_number - 1] = distribution_of_hours[dh].value;
 
                   if (distribution_of_hours[dh].individual_tasks != '') {
@@ -4051,7 +4012,7 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
                   }
                 });
                 iter++;
-                result.push([iter, educationItems[e].subject.name, distributionControls[0], distributionControls[1], distributionControls[2], educationItems[e].credits, educationItems[e].credits * 30, _.sum(hours) * 8, educationItems[e].lectures, _.sum(hours) * 8 - educationItems[e].lectures, educationItems[e].laboratories, educationItems[e].credits * 30 - _.sum(hours) * 8]);
+                result.push([iter, educationItems[e].subjects.name, distributionControls[0], distributionControls[1], distributionControls[2], educationItems[e].credits, educationItems[e].credits * 30, _.sum(hours) * 8, educationItems[e].lectures, _.sum(hours) * 8 - educationItems[e].lectures, educationItems[e].laboratories, educationItems[e].credits * 30 - _.sum(hours) * 8]);
 
                 _.fill(distributionControls, 0);
 
@@ -4089,7 +4050,7 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
               sumHoursCycles[i] += sumHours[i];
             }
 
-            if (categories[cat].sub_categories.length == 0) {
+            if (categories[cat].subcategory.length == 0) {
               result.push(_.concat([""], ["Усього"], sumCategory, sumHours));
 
               _.fill(sumCategory, 0);
@@ -4097,13 +4058,13 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
               _.fill(sumHours, 0);
             }
 
-            categories[cat].sub_categories.forEach(function (item, subCat, sub_categories) {
+            categories[cat].subcategory.forEach(function (item, subCat, sub_categories) {
               result.push([sub_categories[subCat].name]); // Назва під категорії
 
               var distributionControls = [0, 0, 0];
               response.data.educationItems.forEach(function (item, e, educationItems) {
                 if (educationItems[e].sub_category_id == sub_categories[subCat].sub_category_id) {
-                  educationItems[e].distribution_of_hours.forEach(function (item, dh, distribution_of_hours) {
+                  educationItems[e].hours.forEach(function (item, dh, distribution_of_hours) {
                     hours[distribution_of_hours[dh].module_number - 1] = distribution_of_hours[dh].value;
 
                     if (distribution_of_hours[dh].individual_tasks != '') {
@@ -4119,7 +4080,7 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
                     }
                   });
                   iter++;
-                  result.push([iter, educationItems[e].subject.name, distributionControls[0], distributionControls[1], distributionControls[2], educationItems[e].credits, educationItems[e].credits * 30, _.sum(hours) * 8, educationItems[e].lectures, _.sum(hours) * 8 - educationItems[e].lectures, educationItems[e].laboratories, educationItems[e].credits * 30 - _.sum(hours) * 8]);
+                  result.push([iter, educationItems[e].subjects.name, distributionControls[0], distributionControls[1], distributionControls[2], educationItems[e].credits, educationItems[e].credits * 30, _.sum(hours) * 8, educationItems[e].lectures, _.sum(hours) * 8 - educationItems[e].lectures, educationItems[e].laboratories, educationItems[e].credits * 30 - _.sum(hours) * 8]);
 
                   _.fill(distributionControls, 0);
 
@@ -4191,7 +4152,7 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
           _.fill(sumHoursCycles, 0);
         });
         result.push(_.concat([""], ["Загальна кількість"], sumAll, sumHoursAll));
-        Api().get("plan-controls/".concat(_this.getEducationPlanId)).then(function (response) {
+        axios.get("/plan-controls/".concat(_this.getEducationPlanId)).then(function (response) {
           response.data.forEach(function (item, cont, controls) {
             hours_week[controls[cont].module_number - 1] = controls[cont].hours_week;
             credit[controls[cont].module_number - 1] = controls[cont].credit;
@@ -4199,9 +4160,9 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
           });
           controlRes.push(_.concat([""], ["Кількість годин на тиждень"], hours_week), _.concat([""], ["Кількість іспитів"], credit), _.concat([""], ["Кількість заліків"], exams), _.concat([""], ["Кількість курсових робіт"], course_work));
         }).then(function () {
-          Api().get("education-plan/".concat(_this.getEducationPlanId)).then(function (response) {
+          axios.get("/plan/".concat(_this.getEducationPlanId)).then(function (response) {
             var dataPlan = {
-              subdivision: response.data[0].department.subdivision.name,
+              subdivision: 'test',
               year: response.data[0].year,
               qualification: response.data[0].qualification,
               discipline: response.data[0].discipline,
@@ -26699,7 +26660,7 @@ var render = function() {
           attrs: { color: "info" },
           on: {
             click: function($event) {
-              return _vm.viewItem("/education-plan/" + _vm.getEducationPlanId)
+              return _vm.viewItem("/" + _vm.getEducationPlanId)
             }
           }
         },
@@ -26722,6 +26683,7 @@ var render = function() {
       _vm._v(" "),
       _c("div", {
         staticClass: "pb-5",
+        staticStyle: { "overflow-x": "auto" },
         domProps: { innerHTML: _vm._s(_vm.table) }
       })
     ],
@@ -73498,6 +73460,10 @@ vue__WEBPACK_IMPORTED_MODULE_0___default.a.use(vue_router__WEBPACK_IMPORTED_MODU
     path: '/:id',
     name: 'plan-detail',
     component: _components_EducationPlan_Detail__WEBPACK_IMPORTED_MODULE_10__["default"]
+  }, {
+    path: '/view/:id',
+    name: 'education-plan-view',
+    component: _components_EducationPlan_Table__WEBPACK_IMPORTED_MODULE_11__["default"]
   }]
 }));
 
@@ -73745,7 +73711,7 @@ var mutations = {
     state.educationItems = items;
   },
   addEducationItem: function addEducationItem(state, item) {
-    state.educationItems.push(item);
+    state.educationItems.push(item[0]);
   },
   updateEducationItem: function updateEducationItem(state, educationItemId, data) {
     var index = _.findIndex(state.educationItems, function (item) {

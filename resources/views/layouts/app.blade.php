@@ -7,7 +7,8 @@
     <meta name="csrf-token" content="{{ csrf_token() }}">
     <meta name="user" content="{{ Auth::user() }}">
     <link rel="manifest" href="/manifest.json">
-    <title>{{ config('app.name', 'Laravel') }}</title>
+    <title>Навчальні плани</title>
+    <link rel="icon" href="favicon.ico" type="image/x-icon" />
     <link href='https://fonts.googleapis.com/css?family=Roboto:300,400,500,700|Material+Icons' rel="stylesheet">
     <link href="https://unpkg.com/vuetify/dist/vuetify.min.css" rel="stylesheet">
     <link href="https://cdnjs.cloudflare.com/ajax/libs/pace/1.0.2/themes/blue/pace-theme-corner-indicator.min.css" rel="stylesheet">
@@ -88,7 +89,7 @@
     >
         <v-toolbar-title :style="$vuetify.breakpoint.smAndUp ? 'width: 300px; min-width: 250px' : 'min-width: 72px'" class="ml-0 pl-3">
             <v-toolbar-side-icon @click.stop="drawer = !drawer"></v-toolbar-side-icon>
-            <span class="hidden-xs-only">{{ config('app.shortname', 'Laravel') }}</span>
+            <span class="hidden-xs-only">{{ config('app.shortname', 'Навчальні плани') }}</span>
         </v-toolbar-title>
         <div class="d-flex align-center" style="margin-left: auto">
             <v-btn flat>Вихід</v-btn>

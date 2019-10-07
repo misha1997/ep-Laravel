@@ -81,9 +81,7 @@
     methods: {
       ...mapMutations({
         'updateEducationItem': 'plan/updateEducationItem',
-        'removeEducationItem': 'plan/removeEducationItem',
-        'enableLoading': 'overlay/enableLoading',
-        'disableLoading': 'overlay/disableLoading'
+        'removeEducationItem': 'plan/removeEducationItem'
       }),
 
       editItem(){
@@ -93,47 +91,23 @@
       deleteItem (item) {
         let isDelete = confirm('Ви впевнені, що хочете видалити цей елемент?');
         if(isDelete) {
-          this.enableLoading();
-
-          axios.delete(`distribution-of-controls/${item.education_item_id}`)
-            .then(() => {
-              console.log("distribution-of-controls видалений");
-            })
-            .catch((err) => {
-              console.log(err);
-            })
-
-          axios.delete(`distribution-of-hours/${item.education_item_id}`)
-            .then(() => {
-              console.log("distribution-of-hours видалений");
-            })
-            .catch((err) => {
-              console.log(err);
-            })
-
-          axios.delete(`education-item/${item.education_item_id}`)
+          axios.delete(`plan-items/${item.education_item_id}`)
             .then(() => {
               this.removeEducationItem(item.education_item_id);
-              successAlert("Запис був видалений");
+              console.log("Запис видалений");
             })
             .catch((err) => {
-              errorAlert(err);
-            })
-            .then(()=>{
-              this.disableLoading();
+              console.log(err);
             })
         }
       },
 
       modulesForm(educationItemId){ 
 
-        axios.post('education-item', {
-          id: this.data.item.education_plans_id
-        }).then((res) => {
+        axios.get('plan-items/'+this.data.item.education_plans_id).then((res) => {
           var controls = []
-          console.log('aaaaaaaa')
           res.data.educationItems.forEach(elem => {
-            elem.distribution_of_hours.forEach(hour => {
+            elem.hours.forEach(hour => {
               controls.push(hour)
             })
           });
