@@ -15,7 +15,7 @@ class LoggedUserController extends Controller
     /**
      * Update user.
      * @param Request $request
-     * @return \App\User|null
+     * @return \App\Models\User|null
      */
     public function update(Request $request)
     {

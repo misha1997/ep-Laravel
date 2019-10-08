@@ -4,11 +4,9 @@
             v-model="showLogin"
             persistent max-width="500px"
             :fullscreen="$vuetify.breakpoint.xsOnly">
-        <v-btn color="primary" dark slot="activator">Login</v-btn>
-
         <v-card>
             <v-card-title>
-                <span class="headline">Login</span>
+                <span class="headline">Авторизація</span>
             </v-card-title>
             <v-card-text>
                 <v-form ref="loginForm" v-model="valid">
@@ -48,7 +46,6 @@
             </v-card-text>
             <v-card-actions>
                 <v-spacer></v-spacer>
-                <v-btn color="blue darken-2" flat @click.native="showLogin = false">Close</v-btn>
                 <v-btn color="blue darken-2" class="white--text" @click.native="login" :loading="loginLoading">Login</v-btn>
                 <v-spacer></v-spacer>
             </v-card-actions>
@@ -118,7 +115,7 @@
           this.$store.dispatch(actions.LOGIN, credentials).then(response => {
             this.loginLoading = false
             this.showLogin = false
-            window.location = '/home'
+            window.location = '/'
           }).catch(error => {
             console.log('HEY:')
             console.log(error.response.data)

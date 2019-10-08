@@ -59,6 +59,12 @@ Route::post('user', 'UserController@postUsers');
 Route::post('user/{id}/', 'UserController@putUsers');
 Route::delete('user/{id}/', 'UserController@deleteUsers');
 
-Route::get('/{any}', 'HomeController@index')->where('any', '.*');
+Route::get('/login', function () {
+    return view('login');
+});
+
+Route::group(['middleware' => 'auth'], function () {
+    Route::get('/{any}', 'HomeController@index')->where('any', '.*');
+});
 
 Auth::routes();
