@@ -82,9 +82,6 @@
           </v-icon>
         </td>
       </template>
-      <template slot="no-data">
-        <v-btn color="primary">Reset</v-btn>
-      </template>
     </v-data-table>
   </div>
 </template>
@@ -160,10 +157,21 @@
         return this.editedItem.category_id;
       },
       validator(){
-          return false;
+          for (let i = 0; i < this.cycles.length; i++) {
+            if(this.cycles[i].cycles_id == this.editedItem.cycles_id) {
+              var cycles_id = this.editedItem.cycles_id;
+              var category_id = this.editedItem.category_id;
+              this.creditsAll = this.cycles[i].credits;
+            }
+          }
+          let findCycles = this.data.filter(function(cycles) {
+            return cycles.cycles_id == cycles_id && cycles.category_id != category_id;
+          });
+
+          this.cycleCredits = _.sumBy(findCycles, (item) => {return +item.credits});
+          return (this.editedItem.credits) ? this.cycleCredits + +this.editedItem.credits > this.creditsAll : false;
       }
     }
   }
   
-
 </script>

@@ -19,7 +19,7 @@ class CreateEducationPlansTable extends Migration
             $table->integer('user_id')->unsigned();
             $table->integer('department_id')->unsigned();
             $table->string('name', 255);
-            $table->string('status', 50)->default('created');
+            $table->string('status', 50)->default('Шаблон');
             $table->integer('year');
             $table->string('qualification', 20)->nullable();
             $table->string('discipline', 50)->nullable();

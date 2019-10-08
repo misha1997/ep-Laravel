@@ -38,11 +38,15 @@
 </template>
 
 <script>
-  import {mapMutations} from 'vuex';
+  import {mapMutations, mapGetters} from 'vuex';
 
   import { EventBus } from '../../../event-bus.js';
+   import snackbar from '../../mixins/withSnackbar';
 
   export default {
+
+    mixins: [snackbar],
+
     props: {
       data: {
         type: Object,
@@ -58,6 +62,10 @@
     },
 
     computed: {
+      ...mapGetters({
+        'snackbarTimeout': 'snackbarTimeout'
+      }),
+
       getDistributionOfHours(){
         return this.data.item.hours;
       },
@@ -94,10 +102,10 @@
           axios.delete(`plan-items/${item.education_item_id}`)
             .then(() => {
               this.removeEducationItem(item.education_item_id);
-              console.log("Запис видалений");
+              this.showMessage("Запис видалений");
             })
             .catch((err) => {
-              console.log(err);
+              this.showError(err);
             })
         }
       },

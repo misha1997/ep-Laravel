@@ -1947,9 +1947,6 @@ __webpack_require__.r(__webpack_exports__);
 //
 //
 //
-//
-//
-//
 
 
 /* harmony default export */ __webpack_exports__["default"] = ({
@@ -2016,7 +2013,21 @@ __webpack_require__.r(__webpack_exports__);
       return this.editedItem.category_id;
     },
     validator: function validator() {
-      return false;
+      for (var i = 0; i < this.cycles.length; i++) {
+        if (this.cycles[i].cycles_id == this.editedItem.cycles_id) {
+          var cycles_id = this.editedItem.cycles_id;
+          var category_id = this.editedItem.category_id;
+          this.creditsAll = this.cycles[i].credits;
+        }
+      }
+
+      var findCycles = this.data.filter(function (cycles) {
+        return cycles.cycles_id == cycles_id && cycles.category_id != category_id;
+      });
+      this.cycleCredits = _.sumBy(findCycles, function (item) {
+        return +item.credits;
+      });
+      return this.editedItem.credits ? this.cycleCredits + +this.editedItem.credits > this.creditsAll : false;
     }
   }
 });
@@ -2540,12 +2551,13 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
 "use strict";
 __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var vuex__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! vuex */ "./node_modules/vuex/dist/vuex.esm.js");
-/* harmony import */ var _Forms_DistributionOfLearning__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./Forms/DistributionOfLearning */ "./resources/js/components/EducationPlan/Forms/DistributionOfLearning.vue");
-/* harmony import */ var _Forms_CreationItem__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ./Forms/CreationItem */ "./resources/js/components/EducationPlan/Forms/CreationItem.vue");
-/* harmony import */ var _Forms_ModulesForm__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ./Forms/ModulesForm */ "./resources/js/components/EducationPlan/Forms/ModulesForm.vue");
-/* harmony import */ var _SubCategory__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! ./SubCategory */ "./resources/js/components/EducationPlan/SubCategory.vue");
-/* harmony import */ var _Category__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! ./Category */ "./resources/js/components/EducationPlan/Category.vue");
-/* harmony import */ var _Cycles__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(/*! ./Cycles */ "./resources/js/components/EducationPlan/Cycles.vue");
+/* harmony import */ var _mixins_withSnackbar__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ../mixins/withSnackbar */ "./resources/js/components/mixins/withSnackbar.js");
+/* harmony import */ var _Forms_DistributionOfLearning__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ./Forms/DistributionOfLearning */ "./resources/js/components/EducationPlan/Forms/DistributionOfLearning.vue");
+/* harmony import */ var _Forms_CreationItem__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ./Forms/CreationItem */ "./resources/js/components/EducationPlan/Forms/CreationItem.vue");
+/* harmony import */ var _Forms_ModulesForm__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! ./Forms/ModulesForm */ "./resources/js/components/EducationPlan/Forms/ModulesForm.vue");
+/* harmony import */ var _SubCategory__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! ./SubCategory */ "./resources/js/components/EducationPlan/SubCategory.vue");
+/* harmony import */ var _Category__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(/*! ./Category */ "./resources/js/components/EducationPlan/Category.vue");
+/* harmony import */ var _Cycles__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__(/*! ./Cycles */ "./resources/js/components/EducationPlan/Cycles.vue");
 function ownKeys(object, enumerableOnly) { var keys = Object.keys(object); if (Object.getOwnPropertySymbols) { var symbols = Object.getOwnPropertySymbols(object); if (enumerableOnly) symbols = symbols.filter(function (sym) { return Object.getOwnPropertyDescriptor(object, sym).enumerable; }); keys.push.apply(keys, symbols); } return keys; }
 
 function _objectSpread(target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i] != null ? arguments[i] : {}; if (i % 2) { ownKeys(source, true).forEach(function (key) { _defineProperty(target, key, source[key]); }); } else if (Object.getOwnPropertyDescriptors) { Object.defineProperties(target, Object.getOwnPropertyDescriptors(source)); } else { ownKeys(source).forEach(function (key) { Object.defineProperty(target, key, Object.getOwnPropertyDescriptor(source, key)); }); } } return target; }
@@ -2595,23 +2607,26 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
 
 
 
+
 /* harmony default export */ __webpack_exports__["default"] = ({
+  mixins: [_mixins_withSnackbar__WEBPACK_IMPORTED_MODULE_1__["default"]],
   components: {
-    SubCategory: _SubCategory__WEBPACK_IMPORTED_MODULE_4__["default"],
-    Category: _Category__WEBPACK_IMPORTED_MODULE_5__["default"],
-    Cycles: _Cycles__WEBPACK_IMPORTED_MODULE_6__["default"],
-    CreationItem: _Forms_CreationItem__WEBPACK_IMPORTED_MODULE_2__["default"],
-    ModulesForm: _Forms_ModulesForm__WEBPACK_IMPORTED_MODULE_3__["default"],
-    DistributionOfLearning: _Forms_DistributionOfLearning__WEBPACK_IMPORTED_MODULE_1__["default"]
+    SubCategory: _SubCategory__WEBPACK_IMPORTED_MODULE_5__["default"],
+    Category: _Category__WEBPACK_IMPORTED_MODULE_6__["default"],
+    Cycles: _Cycles__WEBPACK_IMPORTED_MODULE_7__["default"],
+    CreationItem: _Forms_CreationItem__WEBPACK_IMPORTED_MODULE_3__["default"],
+    ModulesForm: _Forms_ModulesForm__WEBPACK_IMPORTED_MODULE_4__["default"],
+    DistributionOfLearning: _Forms_DistributionOfLearning__WEBPACK_IMPORTED_MODULE_2__["default"]
   },
   data: function data() {
     return {
       data: [],
-      name: '',
+      plan: '',
       status: ''
     };
   },
   computed: _objectSpread({}, Object(vuex__WEBPACK_IMPORTED_MODULE_0__["mapGetters"])({
+    'snackbarTimeout': 'snackbarTimeout',
     'getEducationPlanId': 'plan/getEducationPlanId'
   })),
   created: function created() {
@@ -2628,11 +2643,12 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
 
       if (this.getEducationPlanId) {
         axios.get("plan-items/".concat(this.$route.params.id)).then(function (response) {
+          _this.plan = response.data.plan[0];
           _this.data = response.data.data;
 
           _this.setEducationItems(response.data.educationItems);
         })["catch"](function (err) {
-          console.log(err);
+          _this.showError(err);
         });
       }
     },
@@ -2640,32 +2656,40 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
       this.$router.push("view/".concat(this.getEducationPlanId));
     },
     clonePlan: function clonePlan() {
-      axios.post("education-plan/clone-plan", {
-        id: this.getEducationPlanId,
-        user_id: this.$store.state.user
-      }).then(function () {
-        successAlert("Навчальний план склоновано");
+      var _this2 = this;
+
+      axios.post("clone-plan", {
+        plan: this.plan,
+        user_id: 1
+      }).then(function (res) {
+        _this2.showMessage("Навчальний план склоновано");
       });
     },
     sendVerify: function sendVerify() {
-      axios.post("education-plan/send-verify", {
-        id: this.getEducationPlanId
+      var _this3 = this;
+
+      axios.post("change-status/".concat(this.plan.id), {
+        status: 'На перевірці'
       }).then(function () {
-        successAlert("Навчальний план відправлено на верифікацію");
+        _this3.showMessage("Навчальний план відправлено на верифікацію");
       });
     },
     verify: function verify() {
-      axios.post("education-plan/verify", {
-        id: this.getEducationPlanId
+      var _this4 = this;
+
+      axios.post("change-status/".concat(this.plan.id), {
+        status: 'Верифіковано'
       }).then(function () {
-        successAlert("Навчальний план верифіковано");
+        _this4.showMessage("Навчальний план верифіковано");
       });
     },
     refinement: function refinement() {
-      axios.post("education-plan/refinement", {
-        id: this.getEducationPlanId
+      var _this5 = this;
+
+      axios.post("change-status/".concat(this.plan.id), {
+        status: 'На доопрацюванні'
       }).then(function () {
-        successAlert("Навчальний план відправлено на доопрацювання");
+        _this5.showMessage("Навчальний план відправлено на доопрацювання");
       });
     },
     viewHome: function viewHome(link) {
@@ -3637,6 +3661,7 @@ var ROMAN_NUMBERS = ["I", "II", "III", "IV"];
 __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var vuex__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! vuex */ "./node_modules/vuex/dist/vuex.esm.js");
 /* harmony import */ var _event_bus_js__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ../../../event-bus.js */ "./resources/js/event-bus.js");
+/* harmony import */ var _mixins_withSnackbar__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ../../mixins/withSnackbar */ "./resources/js/components/mixins/withSnackbar.js");
 function ownKeys(object, enumerableOnly) { var keys = Object.keys(object); if (Object.getOwnPropertySymbols) { var symbols = Object.getOwnPropertySymbols(object); if (enumerableOnly) symbols = symbols.filter(function (sym) { return Object.getOwnPropertyDescriptor(object, sym).enumerable; }); keys.push.apply(keys, symbols); } return keys; }
 
 function _objectSpread(target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i] != null ? arguments[i] : {}; if (i % 2) { ownKeys(source, true).forEach(function (key) { _defineProperty(target, key, source[key]); }); } else if (Object.getOwnPropertyDescriptors) { Object.defineProperties(target, Object.getOwnPropertyDescriptors(source)); } else { ownKeys(source).forEach(function (key) { Object.defineProperty(target, key, Object.getOwnPropertyDescriptor(source, key)); }); } } return target; }
@@ -3684,7 +3709,9 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
 //
 
 
+
 /* harmony default export */ __webpack_exports__["default"] = ({
+  mixins: [_mixins_withSnackbar__WEBPACK_IMPORTED_MODULE_2__["default"]],
   props: {
     data: {
       type: Object,
@@ -3697,7 +3724,9 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
       return value;
     }
   },
-  computed: {
+  computed: _objectSpread({}, Object(vuex__WEBPACK_IMPORTED_MODULE_0__["mapGetters"])({
+    'snackbarTimeout': 'snackbarTimeout'
+  }), {
     getDistributionOfHours: function getDistributionOfHours() {
       return this.data.item.hours;
     },
@@ -3715,7 +3744,7 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
         laboratories: this.data.item.laboratories
       };
     }
-  },
+  }),
   methods: _objectSpread({}, Object(vuex__WEBPACK_IMPORTED_MODULE_0__["mapMutations"])({
     'updateEducationItem': 'plan/updateEducationItem',
     'removeEducationItem': 'plan/removeEducationItem'
@@ -3732,9 +3761,9 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
         axios["delete"]("plan-items/".concat(item.education_item_id)).then(function () {
           _this.removeEducationItem(item.education_item_id);
 
-          console.log("Запис видалений");
+          _this.showMessage("Запис видалений");
         })["catch"](function (err) {
-          console.log(err);
+          _this.showError(err);
         });
       }
     },
@@ -5324,9 +5353,6 @@ __webpack_require__.r(__webpack_exports__);
 //
 //
 //
-//
-//
-//
 
 
 /* harmony default export */ __webpack_exports__["default"] = ({
@@ -5336,6 +5362,8 @@ __webpack_require__.r(__webpack_exports__);
       apiUrl: 'sub-category',
       primaryKey: 'sub_category_id',
       categories: [],
+      cycles: [],
+      subCategories: [],
       headers: [{
         text: 'Назва підкатегорії',
         value: 'name'
@@ -5367,6 +5395,7 @@ __webpack_require__.r(__webpack_exports__);
   },
   created: function created() {
     this.fetchData();
+    this.getCycles();
     this.getCategories();
   },
   filters: {
@@ -5383,15 +5412,39 @@ __webpack_require__.r(__webpack_exports__);
       return this.editedItem.sub_category_id;
     },
     validator: function validator() {
-      return false;
+      var _this = this;
+
+      for (var i = 0; i < this.categories.length; i++) {
+        if (this.categories[i].category_id == this.editedItem.category_id) {
+          var cycleId = this.categories[i].cycles_id;
+        }
+      }
+
+      for (var _i = 0; _i < this.cycles.length; _i++) {
+        if (this.cycles[_i].cycles_id == cycleId) {
+          this.creditsAll = this.cycles[_i].credits;
+        }
+      }
+
+      this.subCategoriesCredits = _.sumBy(this.subCategories, function (item) {
+        return item.sub_category_id != _this.editedItem.sub_category_id ? +item.credits : 0;
+      });
+      return this.editedItem.credits ? this.subCategoriesCredits + +this.editedItem.credits > this.creditsAll : false;
     }
   },
   methods: {
+    getCycles: function getCycles() {
+      var _this2 = this;
+
+      axios.get('cycle').then(function (response) {
+        _this2.cycles = response.data;
+      });
+    },
     getCategories: function getCategories() {
-      var _this = this;
+      var _this3 = this;
 
       axios.get('category').then(function (response) {
-        _this.categories = response.data;
+        _this3.categories = response.data;
       });
     }
   }
@@ -5642,6 +5695,8 @@ __webpack_require__.r(__webpack_exports__);
 
 "use strict";
 __webpack_require__.r(__webpack_exports__);
+/* harmony import */ var _mixins_crud__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./mixins/crud */ "./resources/js/components/mixins/crud.js");
+/* harmony import */ var _mixins_validation__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./mixins/validation */ "./resources/js/components/mixins/validation.js");
 //
 //
 //
@@ -5709,25 +5764,192 @@ __webpack_require__.r(__webpack_exports__);
 //
 //
 //
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+
+
 /* harmony default export */ __webpack_exports__["default"] = ({
+  mixins: [_mixins_validation__WEBPACK_IMPORTED_MODULE_1__["default"], _mixins_crud__WEBPACK_IMPORTED_MODULE_0__["default"]],
   data: function data() {
     return {
+      apiUrl: 'user',
+      primaryKey: 'id',
+      universities: [],
+      departments: [],
+      emails: [],
+      roles: [{
+        role: 'admin',
+        name: 'Адміністратор'
+      }, {
+        role: 'repres_omu',
+        name: 'Представник ОМУ'
+      }, {
+        role: 'repres_depart',
+        name: 'Представник кафедри'
+      }],
       headers: [{
-        text: 'Назва циклу',
+        text: 'Ім\'я',
         value: 'name'
       }, {
-        text: 'Кількість кредитів',
-        value: 'credits'
+        text: 'Email',
+        value: 'email'
+      }, {
+        text: 'Роль',
+        value: 'role'
       }, {
         text: '',
         value: 'name',
         sortable: false
-      }]
+      }],
+      editedItem: {
+        name: '',
+        department_id: null,
+        surname: '',
+        email: '',
+        role: ''
+      },
+      defaultItem: {
+        name: '',
+        surname: '',
+        department_id: null,
+        email: '',
+        role: '',
+        password: ''
+      }
     };
   },
-  created: function created() {},
-  filters: {},
-  computed: {}
+  created: function created() {
+    this.fetchData();
+    this.fetchSubDivisions();
+    this.fetchEmails();
+  },
+  computed: {
+    formTitle: function formTitle() {
+      return this.editedIndex === -1 ? 'Новий користувач' : 'Редагувати користувача';
+    },
+    formEdit: function formEdit() {
+      return this.editedIndex === -1 ? true : false;
+    },
+    isDepartments: function isDepartments() {
+      return !_.isEmpty(this.departments);
+    },
+    getRequestId: function getRequestId() {
+      return this.editedItem.user_id;
+    }
+  },
+  methods: {
+    deleteEmail: function deleteEmail() {
+      delete this.emails.pop();
+    },
+    editItem: function editItem(item) {
+      this.editedIndex = this.data.indexOf(item);
+      this.editedItem = Object.assign({}, item);
+      this.getDepartments();
+      this.dialog = true;
+    },
+    fetchSubDivisions: function fetchSubDivisions() {
+      var _this = this;
+
+      axios.get('subdivision').then(function (response) {
+        _this.universities = _.map(response.data, function (item) {
+          return {
+            subdivision_id: item.subdivision_id,
+            name: item.name
+          };
+        });
+      })["catch"](function (err) {
+        console.log(err);
+      });
+    },
+    getDepartments: function getDepartments() {
+      var _this2 = this;
+
+      axios.get('department/' + this.editedItem.subdivision_id).then(function (response) {
+        _this2.departments = _.map(response.data, function (item) {
+          return {
+            department_id: item.department_id,
+            name: item.name
+          };
+        });
+      })["catch"](function (err) {
+        console.log(err);
+      });
+    },
+    fetchEmails: function fetchEmails() {
+      var _this3 = this;
+
+      axios.get('users').then(function (response) {
+        for (var i = 0; i < response.data.length; i++) {
+          _this3.emails.push(response.data[i].email);
+        }
+      })["catch"](function (err) {
+        console.log(err);
+      });
+    }
+  }
 });
 
 /***/ }),
@@ -24409,78 +24631,65 @@ var render = function() {
         1
       ),
       _vm._v(" "),
-      _c(
-        "v-data-table",
-        {
-          staticClass: "elevation-1",
-          attrs: {
-            headers: _vm.headers,
-            items: _vm.data,
-            "rows-per-page-items": _vm.rowsPerPageItems,
-            "rows-per-page-text": "Кількість рядків на сторінці"
-          },
-          scopedSlots: _vm._u([
-            {
-              key: "items",
-              fn: function(props) {
-                return [
-                  _c("td", [_vm._v(_vm._s(props.item.name))]),
-                  _vm._v(" "),
-                  _c("td", [
-                    _vm._v(_vm._s(_vm._f("zeroValue")(props.item.credits)))
-                  ]),
-                  _vm._v(" "),
-                  _c("td", [_vm._v(_vm._s(props.item.cycles.name))]),
-                  _vm._v(" "),
-                  _c(
-                    "td",
-                    { staticClass: "justify-center layout px-1 pr-4" },
-                    [
-                      _c(
-                        "v-icon",
-                        {
-                          staticClass: "mr-2",
-                          attrs: { title: "Редагувати", small: "" },
-                          on: {
-                            click: function($event) {
-                              return _vm.editItem(props.item)
-                            }
-                          }
-                        },
-                        [_vm._v("\n          edit\n        ")]
-                      ),
-                      _vm._v(" "),
-                      _c(
-                        "v-icon",
-                        {
-                          attrs: { title: "Видалити", small: "" },
-                          on: {
-                            click: function($event) {
-                              return _vm.deleteItem(props.item)
-                            }
-                          }
-                        },
-                        [_vm._v("\n          delete\n        ")]
-                      )
-                    ],
-                    1
-                  )
-                ]
-              }
-            }
-          ])
+      _c("v-data-table", {
+        staticClass: "elevation-1",
+        attrs: {
+          headers: _vm.headers,
+          items: _vm.data,
+          "rows-per-page-items": _vm.rowsPerPageItems,
+          "rows-per-page-text": "Кількість рядків на сторінці"
         },
-        [
-          _vm._v(" "),
-          _c(
-            "template",
-            { slot: "no-data" },
-            [_c("v-btn", { attrs: { color: "primary" } }, [_vm._v("Reset")])],
-            1
-          )
-        ],
-        2
-      )
+        scopedSlots: _vm._u([
+          {
+            key: "items",
+            fn: function(props) {
+              return [
+                _c("td", [_vm._v(_vm._s(props.item.name))]),
+                _vm._v(" "),
+                _c("td", [
+                  _vm._v(_vm._s(_vm._f("zeroValue")(props.item.credits)))
+                ]),
+                _vm._v(" "),
+                _c("td", [_vm._v(_vm._s(props.item.cycles.name))]),
+                _vm._v(" "),
+                _c(
+                  "td",
+                  { staticClass: "justify-center layout px-1 pr-4" },
+                  [
+                    _c(
+                      "v-icon",
+                      {
+                        staticClass: "mr-2",
+                        attrs: { title: "Редагувати", small: "" },
+                        on: {
+                          click: function($event) {
+                            return _vm.editItem(props.item)
+                          }
+                        }
+                      },
+                      [_vm._v("\n          edit\n        ")]
+                    ),
+                    _vm._v(" "),
+                    _c(
+                      "v-icon",
+                      {
+                        attrs: { title: "Видалити", small: "" },
+                        on: {
+                          click: function($event) {
+                            return _vm.deleteItem(props.item)
+                          }
+                        }
+                      },
+                      [_vm._v("\n          delete\n        ")]
+                    )
+                  ],
+                  1
+                )
+              ]
+            }
+          }
+        ])
+      })
     ],
     1
   )
@@ -25197,7 +25406,7 @@ var render = function() {
         "v-toolbar",
         { attrs: { dark: "", color: "primary mb-4" } },
         [
-          _c("v-toolbar-title", [_vm._v(_vm._s(_vm.name))]),
+          _c("v-toolbar-title", [_vm._v(_vm._s(_vm.plan.name))]),
           _vm._v(" "),
           _c("v-spacer")
         ],
@@ -25238,21 +25447,19 @@ var render = function() {
         [_vm._v("Переглянути")]
       ),
       _vm._v(" "),
-      _vm.status == "created"
-        ? _c(
-            "v-btn",
-            {
-              staticClass: "mx-0",
-              attrs: { color: "info" },
-              on: {
-                click: function($event) {
-                  return _vm.clonePlan()
-                }
-              }
-            },
-            [_vm._v("Створити план за шаблоном")]
-          )
-        : _vm._e(),
+      _c(
+        "v-btn",
+        {
+          staticClass: "mx-0",
+          attrs: { color: "info" },
+          on: {
+            click: function($event) {
+              return _vm.clonePlan()
+            }
+          }
+        },
+        [_vm._v("Створити план за шаблоном")]
+      ),
       _vm._v(" "),
       _vm.status == "cloned"
         ? _c(
@@ -25270,53 +25477,46 @@ var render = function() {
           )
         : _vm._e(),
       _vm._v(" "),
-      _vm.status != "created" && _vm.$store.state.role == "repres_depart"
-        ? _c(
-            "v-btn",
-            {
-              staticClass: "mx-0",
-              attrs: { color: "info right" },
-              on: {
-                click: function($event) {
-                  return _vm.sendVerify()
-                }
-              }
-            },
-            [_vm._v("Відправити на верифікацію")]
-          )
-        : _vm._e(),
+      _c(
+        "v-btn",
+        {
+          staticClass: "mx-0",
+          on: {
+            click: function($event) {
+              return _vm.sendVerify()
+            }
+          }
+        },
+        [_vm._v("Відправити на верифікацію")]
+      ),
       _vm._v(" "),
-      _vm.status == "on verification" && _vm.$store.state.role == "repres_omu"
-        ? _c(
-            "v-btn",
-            {
-              staticClass: "mx-1",
-              attrs: { color: "info right" },
-              on: {
-                click: function($event) {
-                  return _vm.verify()
-                }
-              }
-            },
-            [_vm._v("Підтвердити")]
-          )
-        : _vm._e(),
+      _c(
+        "v-btn",
+        {
+          staticClass: "mx-1",
+          attrs: { color: "info right" },
+          on: {
+            click: function($event) {
+              return _vm.verify()
+            }
+          }
+        },
+        [_vm._v("Підтвердити")]
+      ),
       _vm._v(" "),
-      _vm.status == "on verification" && _vm.$store.state.role == "repres_omu"
-        ? _c(
-            "v-btn",
-            {
-              staticClass: "mx-1",
-              attrs: { color: "info right" },
-              on: {
-                click: function($event) {
-                  return _vm.refinement()
-                }
-              }
-            },
-            [_vm._v("Відправити на доопрацювання")]
-          )
-        : _vm._e(),
+      _c(
+        "v-btn",
+        {
+          staticClass: "mx-1",
+          attrs: { color: "info right" },
+          on: {
+            click: function($event) {
+              return _vm.refinement()
+            }
+          }
+        },
+        [_vm._v("Відправити на доопрацювання")]
+      ),
       _vm._v(" "),
       _vm._l(_vm.data, function(cycles) {
         return _c(
@@ -28042,7 +28242,7 @@ var render = function() {
             }
           }
         },
-        [_vm._v("Close")]
+        [_vm._v("X")]
       )
     ],
     1
@@ -28302,78 +28502,65 @@ var render = function() {
         1
       ),
       _vm._v(" "),
-      _c(
-        "v-data-table",
-        {
-          staticClass: "elevation-1",
-          attrs: {
-            headers: _vm.headers,
-            items: _vm.data,
-            "rows-per-page-items": _vm.rowsPerPageItems,
-            "rows-per-page-text": "Кількість рядків на сторінці"
-          },
-          scopedSlots: _vm._u([
-            {
-              key: "items",
-              fn: function(props) {
-                return [
-                  _c("td", [_vm._v(_vm._s(props.item.name))]),
-                  _vm._v(" "),
-                  _c("td", [
-                    _vm._v(_vm._s(_vm._f("zeroValue")(props.item.credits)))
-                  ]),
-                  _vm._v(" "),
-                  _c("td", [_vm._v(_vm._s(props.item.categories.name))]),
-                  _vm._v(" "),
-                  _c(
-                    "td",
-                    { staticClass: "justify-center layout px-1 pr-4" },
-                    [
-                      _c(
-                        "v-icon",
-                        {
-                          staticClass: "mr-2",
-                          attrs: { title: "Редагувати", small: "" },
-                          on: {
-                            click: function($event) {
-                              return _vm.editItem(props.item)
-                            }
-                          }
-                        },
-                        [_vm._v("\n          edit\n        ")]
-                      ),
-                      _vm._v(" "),
-                      _c(
-                        "v-icon",
-                        {
-                          attrs: { title: "Видалити", small: "" },
-                          on: {
-                            click: function($event) {
-                              return _vm.deleteItem(props.item)
-                            }
-                          }
-                        },
-                        [_vm._v("\n          delete\n        ")]
-                      )
-                    ],
-                    1
-                  )
-                ]
-              }
-            }
-          ])
+      _c("v-data-table", {
+        staticClass: "elevation-1",
+        attrs: {
+          headers: _vm.headers,
+          items: _vm.data,
+          "rows-per-page-items": _vm.rowsPerPageItems,
+          "rows-per-page-text": "Кількість рядків на сторінці"
         },
-        [
-          _vm._v(" "),
-          _c(
-            "template",
-            { slot: "no-data" },
-            [_c("v-btn", { attrs: { color: "primary" } }, [_vm._v("Reset")])],
-            1
-          )
-        ],
-        2
-      )
+        scopedSlots: _vm._u([
+          {
+            key: "items",
+            fn: function(props) {
+              return [
+                _c("td", [_vm._v(_vm._s(props.item.name))]),
+                _vm._v(" "),
+                _c("td", [
+                  _vm._v(_vm._s(_vm._f("zeroValue")(props.item.credits)))
+                ]),
+                _vm._v(" "),
+                _c("td", [_vm._v(_vm._s(props.item.categories.name))]),
+                _vm._v(" "),
+                _c(
+                  "td",
+                  { staticClass: "justify-center layout px-1 pr-4" },
+                  [
+                    _c(
+                      "v-icon",
+                      {
+                        staticClass: "mr-2",
+                        attrs: { title: "Редагувати", small: "" },
+                        on: {
+                          click: function($event) {
+                            return _vm.editItem(props.item)
+                          }
+                        }
+                      },
+                      [_vm._v("\n          edit\n        ")]
+                    ),
+                    _vm._v(" "),
+                    _c(
+                      "v-icon",
+                      {
+                        attrs: { title: "Видалити", small: "" },
+                        on: {
+                          click: function($event) {
+                            return _vm.deleteItem(props.item)
+                          }
+                        }
+                      },
+                      [_vm._v("\n          delete\n        ")]
+                    )
+                  ],
+                  1
+                )
+              ]
+            }
+          }
+        ])
+      })
     ],
     1
   )
@@ -28885,7 +29072,7 @@ var render = function() {
         "v-toolbar",
         { attrs: { dark: "", color: "primary" } },
         [
-          _c("v-toolbar-title", [_vm._v("Цикли навчального плану")]),
+          _c("v-toolbar-title", [_vm._v("Користувачі")]),
           _vm._v(" "),
           _c("v-spacer"),
           _vm._v(" "),
@@ -28920,14 +29107,22 @@ var render = function() {
               _vm._v(" "),
               _c(
                 "v-form",
-                { ref: "form" },
+                {
+                  ref: "form",
+                  on: {
+                    submit: function($event) {
+                      $event.preventDefault()
+                      return _vm.save()
+                    }
+                  }
+                },
                 [
                   _c(
                     "v-card",
                     [
                       _c("v-card-title", [
                         _c("span", { staticClass: "headline" }, [
-                          _vm._v("ddfsd")
+                          _vm._v(_vm._s(_vm.formTitle))
                         ])
                       ]),
                       _vm._v(" "),
@@ -28947,7 +29142,21 @@ var render = function() {
                                     { attrs: { xs12: "" } },
                                     [
                                       _c("v-text-field", {
-                                        attrs: { label: "Назва циклу" }
+                                        attrs: {
+                                          label: "Ім'я",
+                                          rules: _vm.requiredField
+                                        },
+                                        model: {
+                                          value: _vm.editedItem.name,
+                                          callback: function($$v) {
+                                            _vm.$set(
+                                              _vm.editedItem,
+                                              "name",
+                                              $$v
+                                            )
+                                          },
+                                          expression: "editedItem.name"
+                                        }
                                       })
                                     ],
                                     1
@@ -28959,13 +29168,330 @@ var render = function() {
                                     [
                                       _c("v-text-field", {
                                         attrs: {
-                                          label: "Кількість кредитів",
-                                          type: "number"
+                                          label: "Прізвище",
+                                          rules: _vm.requiredField
+                                        },
+                                        model: {
+                                          value: _vm.editedItem.surname,
+                                          callback: function($$v) {
+                                            _vm.$set(
+                                              _vm.editedItem,
+                                              "surname",
+                                              $$v
+                                            )
+                                          },
+                                          expression: "editedItem.surname"
                                         }
                                       })
                                     ],
                                     1
-                                  )
+                                  ),
+                                  _vm._v(" "),
+                                  _vm.formEdit
+                                    ? _c(
+                                        "v-flex",
+                                        { attrs: { xs12: "" } },
+                                        [
+                                          _c("v-text-field", {
+                                            attrs: {
+                                              label: "Email",
+                                              type: "email",
+                                              rules: _vm.emailRules
+                                            },
+                                            model: {
+                                              value: _vm.editedItem.email,
+                                              callback: function($$v) {
+                                                _vm.$set(
+                                                  _vm.editedItem,
+                                                  "email",
+                                                  $$v
+                                                )
+                                              },
+                                              expression: "editedItem.email"
+                                            }
+                                          })
+                                        ],
+                                        1
+                                      )
+                                    : _c(
+                                        "v-flex",
+                                        { attrs: { xs12: "" } },
+                                        [
+                                          _c("v-text-field", {
+                                            attrs: {
+                                              label: "Email",
+                                              type: "email",
+                                              rules: _vm.loginEmailRules
+                                            },
+                                            model: {
+                                              value: _vm.editedItem.email,
+                                              callback: function($$v) {
+                                                _vm.$set(
+                                                  _vm.editedItem,
+                                                  "email",
+                                                  $$v
+                                                )
+                                              },
+                                              expression: "editedItem.email"
+                                            }
+                                          })
+                                        ],
+                                        1
+                                      ),
+                                  _vm._v(" "),
+                                  _c(
+                                    "v-flex",
+                                    { attrs: { xs12: "" } },
+                                    [
+                                      _c("v-select", {
+                                        attrs: {
+                                          rules: _vm.requiredField,
+                                          items: _vm.roles,
+                                          "item-text": "name",
+                                          "item-value": "role",
+                                          label: "Роль",
+                                          required: ""
+                                        },
+                                        model: {
+                                          value: _vm.editedItem.role,
+                                          callback: function($$v) {
+                                            _vm.$set(
+                                              _vm.editedItem,
+                                              "role",
+                                              $$v
+                                            )
+                                          },
+                                          expression: "editedItem.role"
+                                        }
+                                      })
+                                    ],
+                                    1
+                                  ),
+                                  _vm._v(" "),
+                                  _vm.editedItem.role != "admin"
+                                    ? _c(
+                                        "v-flex",
+                                        { attrs: { xs12: "" } },
+                                        [
+                                          _c("v-select", {
+                                            attrs: {
+                                              rules: _vm.requiredField,
+                                              items: _vm.universities,
+                                              "item-text": "name",
+                                              "item-value": "subdivision_id",
+                                              label: "Факультет",
+                                              required: ""
+                                            },
+                                            on: { change: _vm.getDepartments },
+                                            model: {
+                                              value:
+                                                _vm.editedItem.subdivision_id,
+                                              callback: function($$v) {
+                                                _vm.$set(
+                                                  _vm.editedItem,
+                                                  "subdivision_id",
+                                                  $$v
+                                                )
+                                              },
+                                              expression:
+                                                "editedItem.subdivision_id"
+                                            }
+                                          })
+                                        ],
+                                        1
+                                      )
+                                    : _vm._e(),
+                                  _vm._v(" "),
+                                  _vm.isDepartments &&
+                                  _vm.editedItem.role != "admin"
+                                    ? _c(
+                                        "v-flex",
+                                        { attrs: { xs12: "" } },
+                                        [
+                                          _c("v-select", {
+                                            attrs: {
+                                              rules: _vm.requiredField,
+                                              items: _vm.departments,
+                                              "item-text": "name",
+                                              "item-value": "department_id",
+                                              label: "Кафедра",
+                                              required: ""
+                                            },
+                                            model: {
+                                              value:
+                                                _vm.editedItem.department_id,
+                                              callback: function($$v) {
+                                                _vm.$set(
+                                                  _vm.editedItem,
+                                                  "department_id",
+                                                  $$v
+                                                )
+                                              },
+                                              expression:
+                                                "editedItem.department_id"
+                                            }
+                                          })
+                                        ],
+                                        1
+                                      )
+                                    : _vm._e(),
+                                  _vm._v(" "),
+                                  _vm.formEdit
+                                    ? _c(
+                                        "v-flex",
+                                        { attrs: { xs12: "" } },
+                                        [
+                                          _c(
+                                            "v-flex",
+                                            { attrs: { xs12: "" } },
+                                            [
+                                              _c("v-text-field", {
+                                                attrs: {
+                                                  label: "Пароль",
+                                                  type: "password",
+                                                  rules: _vm.passwordRules
+                                                },
+                                                model: {
+                                                  value:
+                                                    _vm.editedItem.password,
+                                                  callback: function($$v) {
+                                                    _vm.$set(
+                                                      _vm.editedItem,
+                                                      "password",
+                                                      $$v
+                                                    )
+                                                  },
+                                                  expression:
+                                                    "editedItem.password"
+                                                }
+                                              })
+                                            ],
+                                            1
+                                          ),
+                                          _vm._v(" "),
+                                          _c(
+                                            "v-flex",
+                                            { attrs: { xs12: "" } },
+                                            [
+                                              _c("v-text-field", {
+                                                attrs: {
+                                                  label: "Повторіть пароль",
+                                                  type: "password",
+                                                  rules: _vm.repeatPasswordRules
+                                                },
+                                                model: {
+                                                  value:
+                                                    _vm.editedItem
+                                                      .repeatPassword,
+                                                  callback: function($$v) {
+                                                    _vm.$set(
+                                                      _vm.editedItem,
+                                                      "repeatPassword",
+                                                      $$v
+                                                    )
+                                                  },
+                                                  expression:
+                                                    "editedItem.repeatPassword"
+                                                }
+                                              })
+                                            ],
+                                            1
+                                          )
+                                        ],
+                                        1
+                                      )
+                                    : _c(
+                                        "v-flex",
+                                        { attrs: { xs12: "" } },
+                                        [
+                                          _c(
+                                            "v-flex",
+                                            { attrs: { xs12: "" } },
+                                            [
+                                              _c("v-text-field", {
+                                                attrs: {
+                                                  label: "Старий пароль",
+                                                  type: "password",
+                                                  rules: _vm.oldPasswordRules
+                                                },
+                                                model: {
+                                                  value:
+                                                    _vm.editedItem.oldPassword,
+                                                  callback: function($$v) {
+                                                    _vm.$set(
+                                                      _vm.editedItem,
+                                                      "oldPassword",
+                                                      $$v
+                                                    )
+                                                  },
+                                                  expression:
+                                                    "editedItem.oldPassword"
+                                                }
+                                              })
+                                            ],
+                                            1
+                                          ),
+                                          _vm._v(" "),
+                                          _c(
+                                            "v-flex",
+                                            { attrs: { xs12: "" } },
+                                            [
+                                              _c("v-text-field", {
+                                                attrs: {
+                                                  label: "Новий пароль",
+                                                  type: "password",
+                                                  rules: _vm.newPasswordRules
+                                                },
+                                                model: {
+                                                  value:
+                                                    _vm.editedItem.newPassword,
+                                                  callback: function($$v) {
+                                                    _vm.$set(
+                                                      _vm.editedItem,
+                                                      "newPassword",
+                                                      $$v
+                                                    )
+                                                  },
+                                                  expression:
+                                                    "editedItem.newPassword"
+                                                }
+                                              })
+                                            ],
+                                            1
+                                          ),
+                                          _vm._v(" "),
+                                          _c(
+                                            "v-flex",
+                                            { attrs: { xs12: "" } },
+                                            [
+                                              _c("v-text-field", {
+                                                attrs: {
+                                                  label: "Повторіть пароль",
+                                                  type: "password",
+                                                  rules:
+                                                    _vm.repeatNewPasswordRules
+                                                },
+                                                model: {
+                                                  value:
+                                                    _vm.editedItem
+                                                      .repeatNewPassword,
+                                                  callback: function($$v) {
+                                                    _vm.$set(
+                                                      _vm.editedItem,
+                                                      "repeatNewPassword",
+                                                      $$v
+                                                    )
+                                                  },
+                                                  expression:
+                                                    "editedItem.repeatNewPassword"
+                                                }
+                                              })
+                                            ],
+                                            1
+                                          )
+                                        ],
+                                        1
+                                      )
                                 ],
                                 1
                               )
@@ -28983,7 +29509,10 @@ var render = function() {
                           _vm._v(" "),
                           _c(
                             "v-btn",
-                            { attrs: { color: "blue darken-1", flat: "" } },
+                            {
+                              attrs: { color: "blue darken-1", flat: "" },
+                              on: { click: _vm.close }
+                            },
                             [_vm._v("Відміна")]
                           ),
                           _vm._v(" "),
@@ -29014,51 +29543,75 @@ var render = function() {
         1
       ),
       _vm._v(" "),
-      _c(
-        "v-data-table",
-        {
-          staticClass: "elevation-1",
-          attrs: {
-            headers: _vm.headers,
-            "rows-per-page-text": "Кількість рядків на сторінці"
-          }
+      _c("v-data-table", {
+        staticClass: "elevation-1",
+        attrs: {
+          headers: _vm.headers,
+          items: _vm.data,
+          "rows-per-page-items": _vm.rowsPerPageItems,
+          "rows-per-page-text": "Кількість рядків на сторінці"
         },
-        [
-          [
-            _c("td", [_vm._v("name")]),
-            _vm._v(" "),
-            _c("td", [_vm._v("credits")]),
-            _vm._v(" "),
-            _c(
-              "td",
-              { staticClass: "justify-center layout px-1 pr-4" },
-              [
-                _c(
-                  "v-icon",
-                  {
-                    staticClass: "mr-2",
-                    attrs: { title: "Редагувати", small: "" }
-                  },
-                  [_vm._v("\n          edit\n        ")]
-                ),
+        scopedSlots: _vm._u([
+          {
+            key: "items",
+            fn: function(props) {
+              return [
+                _c("td", [
+                  _vm._v(_vm._s(props.item.name + " " + props.item.surname))
+                ]),
                 _vm._v(" "),
-                _c("v-icon", { attrs: { title: "Видалити", small: "" } }, [
-                  _vm._v("\n          delete\n        ")
-                ])
-              ],
-              1
-            )
-          ],
-          _vm._v(" "),
-          _c(
-            "template",
-            { slot: "no-data" },
-            [_c("v-btn", { attrs: { color: "primary" } }, [_vm._v("Reset")])],
-            1
-          )
-        ],
-        2
-      )
+                _c("td", [_vm._v(_vm._s(props.item.email))]),
+                _vm._v(" "),
+                props.item.role == "admin"
+                  ? _c("td", [_vm._v("Адміністратор")])
+                  : _vm._e(),
+                _vm._v(" "),
+                props.item.role == "repres_omu"
+                  ? _c("td", [_vm._v("Представник ОМУ")])
+                  : _vm._e(),
+                _vm._v(" "),
+                props.item.role == "repres_depart"
+                  ? _c("td", [_vm._v("Представник кафедри")])
+                  : _vm._e(),
+                _vm._v(" "),
+                _c(
+                  "td",
+                  { staticClass: "justify-center layout px-1 pr-4" },
+                  [
+                    _c(
+                      "v-icon",
+                      {
+                        staticClass: "mr-2",
+                        attrs: { title: "Редагувати", small: "" },
+                        on: {
+                          click: function($event) {
+                            return _vm.editItem(props.item)
+                          }
+                        }
+                      },
+                      [_vm._v("\n          edit\n        ")]
+                    ),
+                    _vm._v(" "),
+                    _c(
+                      "v-icon",
+                      {
+                        attrs: { title: "Видалити", small: "" },
+                        on: {
+                          click: function($event) {
+                            _vm.deleteItem(props.item), _vm.deleteEmail()
+                          }
+                        }
+                      },
+                      [_vm._v("\n          delete\n        ")]
+                    )
+                  ],
+                  1
+                )
+              ]
+            }
+          }
+        ])
+      })
     ],
     1
   )

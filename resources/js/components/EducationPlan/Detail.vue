@@ -1,7 +1,7 @@
 <template>
   <div class="mb-5">
     <v-toolbar dark color="primary mb-4">
-      <v-toolbar-title>{{ name }}</v-toolbar-title>
+      <v-toolbar-title>{{ plan.name }}</v-toolbar-title>
       <v-spacer></v-spacer>
     </v-toolbar>
 
@@ -11,13 +11,13 @@
 
     <v-btn color="info" class="mx-0" @click="viewHome('/')">Перейти до роботи з планами</v-btn>
     <v-btn color="info" class="mx-0" @click="openTable()">Переглянути</v-btn>
-    <v-btn color="info" class="mx-0" v-if="status == 'created'" @click="clonePlan()">Створити план за шаблоном</v-btn>
+    <v-btn color="info" class="mx-0" @click="clonePlan()">Створити план за шаблоном</v-btn>
     <v-btn color="info" class="mx-0" v-if="status == 'cloned'" @click="clonePlan()">Зробити копію плану</v-btn>
 
-    <v-btn v-if="status != 'created' && $store.state.role == 'repres_depart'" color="info right" class="mx-0" @click="sendVerify()">Відправити на верифікацію</v-btn>
+    <v-btn class="mx-0" @click="sendVerify()">Відправити на верифікацію</v-btn>
 
-    <v-btn v-if="status == 'on verification' && $store.state.role == 'repres_omu'" color="info right" class="mx-1" @click="verify()">Підтвердити</v-btn>
-    <v-btn v-if="status == 'on verification' && $store.state.role == 'repres_omu'" color="info right" class="mx-1" @click="refinement()">Відправити на доопрацювання</v-btn>
+    <v-btn color="info right" class="mx-1" @click="verify()">Підтвердити</v-btn>
+    <v-btn color="info right" class="mx-1" @click="refinement()">Відправити на доопрацювання</v-btn>
 
     <div v-for="cycles in data" :key="cycles.cycles_id" class="mt-4">
       <h3 class="text-md-center">{{ cycles.name.toUpperCase() }}</h3>
@@ -37,6 +37,7 @@
 <script>
 
   import {mapGetters, mapMutations} from 'vuex';
+  import snackbar from '../mixins/withSnackbar';
 
   import DistributionOfLearning from './Forms/DistributionOfLearning';
   import CreationItem from './Forms/CreationItem';
@@ -45,7 +46,9 @@
   import Category from './Category';
   import Cycles from './Cycles';
 
-  export default{
+  export default {
+
+    mixins: [snackbar],
 
     components: {
       SubCategory,
@@ -59,13 +62,14 @@
     data(){
       return {
         data: [],
-        name: '',
+        plan: '',
         status: ''
       }
     },
 
     computed:{
       ...mapGetters({
+        'snackbarTimeout': 'snackbarTimeout',
         'getEducationPlanId': 'plan/getEducationPlanId'
       }),
     },
@@ -85,11 +89,12 @@
         this.setEducationPlanId(parseInt(this.$route.params.id));
         if(this.getEducationPlanId){
           axios.get(`plan-items/${this.$route.params.id}`).then((response)=>{
+            this.plan = response.data.plan[0];
             this.data = response.data.data;
             this.setEducationItems(response.data.educationItems);
           })
           .catch((err)=>{
-            console.log(err);
+            this.showError(err);
           })
         }
       },
@@ -99,42 +104,41 @@
       },
 
       clonePlan(){
-        axios.post(`education-plan/clone-plan`, {
-          id: this.getEducationPlanId,
-          user_id : this.$store.state.user
-        }).then(() => {
-          successAlert("Навчальний план склоновано");
+        axios.post(`clone-plan`, {
+          plan: this.plan,
+          user_id : 1
+        }).then((res) => {
+          this.showMessage("Навчальний план склоновано");
         })
       },
 
       sendVerify(){
-        axios.post(`education-plan/send-verify`, {
-          id: this.getEducationPlanId
+        axios.post(`change-status/${this.plan.id}`, {
+          status: 'На перевірці'
         }).then(() => {
-          successAlert("Навчальний план відправлено на верифікацію");
+          this.showMessage("Навчальний план відправлено на верифікацію");
         })
       },
 
       verify(){
-        axios.post(`education-plan/verify`, {
-          id: this.getEducationPlanId
+        axios.post(`change-status/${this.plan.id}`, {
+          status: 'Верифіковано'
         }).then(() => {
-          successAlert("Навчальний план верифіковано");
+          this.showMessage("Навчальний план верифіковано");
         })
       },
 
       refinement(){
-        axios.post(`education-plan/refinement`, {
-          id: this.getEducationPlanId
+        axios.post(`change-status/${this.plan.id}`, {
+          status: 'На доопрацюванні'
         }).then(() => {
-          successAlert("Навчальний план відправлено на доопрацювання");
+          this.showMessage("Навчальний план відправлено на доопрацювання");
         })
       },
 
       viewHome(link){
         this.$router.push(link);
       }
-
     }
   }
 

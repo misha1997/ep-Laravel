@@ -6,6 +6,8 @@ Route::post('plan', 'PlansController@postPlans');
 Route::post('plan/{id}/', 'PlansController@putPlans');
 Route::delete('plan/{id}/', 'PlansController@deletePlans');
 Route::get('plan/{id}/', 'PlansController@getPlanId');
+Route::post('clone-plan', 'PlansController@clonePlan');
+Route::post('change-status/{id}/', 'PlansController@changeStatusPlan');
 
 Route::get('plan-controls/{id}/', 'PlansController@getPlanControls');
 Route::post('plan-controls', 'PlansController@postPlanControls');
@@ -51,6 +53,11 @@ Route::get('subject', 'SubjectsController@getSubjects');
 Route::post('subject', 'SubjectsController@postSubjects');
 Route::post('subject/{id}/', 'SubjectsController@putSubjects');
 Route::delete('subject/{id}/', 'SubjectsController@deleteSubjects');
+
+Route::get('user', 'UserController@getUsers');
+Route::post('user', 'UserController@postUsers');
+Route::post('user/{id}/', 'UserController@putUsers');
+Route::delete('user/{id}/', 'UserController@deleteUsers');
 
 Route::get('/{any}', 'HomeController@index')->where('any', '.*');
 

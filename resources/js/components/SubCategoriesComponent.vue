@@ -87,9 +87,6 @@
           </v-icon>
         </td>
       </template>
-      <template slot="no-data">
-        <v-btn color="primary">Reset</v-btn>
-      </template>
     </v-data-table>
   </div>
 </template>
@@ -109,6 +106,8 @@
         primaryKey: 'sub_category_id',
 
         categories: [],
+        cycles: [],
+        subCategories: [],
 
         headers: [
           { text: 'Назва підкатегорії', value: 'name' },
@@ -138,6 +137,7 @@
 
     created(){
       this.fetchData();
+      this.getCycles();
       this.getCategories();
     },
 
@@ -156,11 +156,30 @@
         return this.editedItem.sub_category_id;
       },
       validator(){
-        return false;
+        for(let i = 0; i < this.categories.length; i++) {
+          if(this.categories[i].category_id == this.editedItem.category_id) {
+            var cycleId = this.categories[i].cycles_id;
+          }
+        }
+        for(let i = 0; i < this.cycles.length; i++) {
+          if(this.cycles[i].cycles_id == cycleId) {
+            this.creditsAll = this.cycles[i].credits;
+          }
+        }
+        this.subCategoriesCredits = _.sumBy(this.subCategories, (item) => 
+        {
+          return (item.sub_category_id != this.editedItem.sub_category_id) ? +item.credits : 0 
+        });
+        return (this.editedItem.credits) ? this.subCategoriesCredits + +this.editedItem.credits > this.creditsAll : false;
       }
     },
 
     methods: {
+      getCycles() {
+        axios.get('cycle').then(response => {
+          this.cycles = response.data;
+        })
+      },
       getCategories() {
         axios.get('category').then(response => {
           this.categories = response.data;
@@ -169,5 +188,4 @@
     }
   }
   
-
 </script>
