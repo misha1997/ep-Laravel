@@ -11,8 +11,8 @@
 
     </v-data-table>
 
-    <v-btn v-if="$store.state.role == 'admin'" color="info" class="mx-0" @click="addSubject()">Додати дисципліну</v-btn>
-    <v-btn v-if="status != 'created' && $store.state.role != 'admin'" color="info" class="mx-0" @click="addSubject()">Додати дисципліну</v-btn>
+    <v-btn v-if="$store.state.auth.user.role == 'admin'" color="info" class="mx-0" @click="addSubject()">Додати дисципліну</v-btn>
+    <v-btn v-if="status != 'Шаблон' && $store.state.auth.user.role != 'admin'" color="info" class="mx-0" @click="addSubject()">Додати дисципліну</v-btn>
   </div>
 </template>
 
@@ -73,7 +73,7 @@
       }),
 
       addSubject(){
-        axios.get(`categories/${this.subCategory.category_id}`)
+        axios.get(`/category/${this.subCategory.category_id}`)
           .then(res => {
             let cycleId = res.data.map((cycles) => {return cycles.cycles_id});
             let credits = res.data.map((cycles) => {return cycles.credits});

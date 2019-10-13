@@ -52,12 +52,13 @@
   import {EventBus} from "../../../event-bus";
 
   import validation from '../../mixins/validation';
+  import withSnackbar from '../../mixins/withSnackbar';
 
-  export default{
+  export default {
 
-    mixins: [validation],
+    mixins: [validation, withSnackbar],
 
-    data(){
+    data() {
       return {
         dialog: false,
 
@@ -117,10 +118,10 @@
             })
             .then((response)=>{
               this.updateLearningData({educationItemId: this.educationItemId, data: response.data});
-              console.log("Запис був збережений");
+              this.showMessage("Збережено");
             })
             .catch((err)=>{
-              console.log(err);
+              this.showError(err);
             })
 
         this.close()

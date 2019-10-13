@@ -31,6 +31,7 @@ let mutations = {
   },
 
   addEducationItem(state, item){
+    item[0].hours = [];
     state.educationItems.push(item[0]);
   },
 
@@ -81,7 +82,7 @@ let mutations = {
     });
 
     if(index !== -1){
-      state.educationItems[index].distribution_of_hours = data;
+      state.educationItems[index].hours = data;
     }
   }
 };

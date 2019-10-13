@@ -11,17 +11,7 @@
 <body>
 <div id="app">
     <v-app light v-cloak>
-        <snack-bar-component></snack-bar-component>
-        <v-toolbar class="white">
-            @if (Route::has('login') && ! Auth::check() )
-                <login-button-component action="{{ $action ?? null }}" ></login-button-component>
-                <remember-password-component action="{{ $action ?? null }}"></remember-password-component>
-                <reset-password-component
-                        action="{{ $action ?? null }}"
-                        token="{{ $token ?? null }}"
-                        email="{{ $email ?? null }}"></reset-password-component>
-            @endif
-        </v-toolbar>
+        <login-component></login-component>
     </v-app>
 </div>
 <script src="{{ url (mix('/js/app.js')) }}" type="text/javascript"></script>

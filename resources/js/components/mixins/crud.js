@@ -1,11 +1,10 @@
-import snackbar from './withSnackbar';
-import { mapGetters } from 'vuex';
+import withSnackbar from './withSnackbar';
 
 export default {
 
-  mixins: [snackbar],
+  mixins: [withSnackbar],
 
-  data(){
+  data() {
     return {
       apiUrl: '',
       primaryKey: '',
@@ -17,12 +16,6 @@ export default {
       }],
       editedIndex: -1,
     }
-  },
-
-  computed: {
-    ...mapGetters([
-      'snackbarTimeout'
-    ])
   },
 
   methods: {
@@ -71,7 +64,7 @@ export default {
 
       if (this.editedIndex > -1) {
         axios.post(`${this.apiUrl}/${this.getRequestId}`, this.editedItem)
-        .then(()=>{
+        .then((res)=>{
           this.fetchData();
           this.showMessage("Запис був збережений");
         })

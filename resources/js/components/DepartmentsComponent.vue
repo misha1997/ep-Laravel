@@ -4,7 +4,7 @@
       <v-toolbar-title>Кафедри</v-toolbar-title>
       <v-spacer></v-spacer>
       <v-dialog v-model="dialog" max-width="500px">
-        <v-btn slot="activator" icon color="primary" dark class="mb-2"> <v-icon title="Додати">add</v-icon></v-btn>
+        <v-btn slot="activator" icon color="primary" v-if="$store.state.auth.user.role == 'admin'" dark class="mb-2"> <v-icon title="Додати">add</v-icon></v-btn>
         <v-form ref="form" @submit.prevent="save()">
           <v-card>
             <v-card-title>
@@ -58,6 +58,7 @@
             small
 
             class="mr-2"
+            v-if="$store.state.auth.user.role == 'admin'"
             @click="editItem(props.item)"
           >
             edit
@@ -65,6 +66,7 @@
           <v-icon
           title="Видалити"
             small
+            v-if="$store.state.auth.user.role == 'admin'"
             @click="deleteItem(props.item)"
           >
             delete

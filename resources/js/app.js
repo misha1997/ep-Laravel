@@ -2,14 +2,10 @@ require('./bootstrap');
 
 window.Vue = require('vue');
 
-import App from './components/App'
+import AppComponent from './components/App'
 
-import LoginButtonComponent from './components/LoginButtonComponent';
-import RegisterButtonComponent from './components/RegisterButtonComponent';
-import RememberPasswordComponent from './components/RememberPasswordComponent';
-import ResetPasswordComponent from './components/ResetPasswordComponent';
+import LoginComponent from './components/LoginComponent';
 import SnackBarComponent from './components/SnackBarComponent';
-
 
 window.Vuetify = require('vuetify');
 import 'vuetify/dist/vuetify.min.css';
@@ -34,12 +30,10 @@ if (window.user) {
 
 const app = new Vue({
   el: '#app',
+  loginLoading: false,
   components: {
-    App,
-    LoginButtonComponent,
-    RegisterButtonComponent,
-    RememberPasswordComponent,
-    ResetPasswordComponent,
+    AppComponent,
+    LoginComponent,
     SnackBarComponent
   },
   store,
@@ -47,11 +41,7 @@ const app = new Vue({
   mixins: [ withSnackbar ],
   data: () => ({
     drawer: null,
-    drawerRight: false,
-    editingUser: false,
     logoutLoading: false,
-    changingPassword: false,
-    updatingUser: false,
     items: [
       { icon: 'home', text: 'Робота з планами', href: '/' },
       { icon: 'file_copy', text: 'Цикли', href: '/cycles' },
@@ -60,7 +50,7 @@ const app = new Vue({
       { icon: 'school', text: 'Факультети', href: '/subdivisions' },
       { icon: 'school', text: 'Кафедри', href: '/departments' },
       { icon: 'school', text: 'Предмети', href: '/subjects' },
-      { icon: 'assignment', text: 'Користувачі', href: '/users' }
+      { icon: 'assignment', text: 'Користувачі', href: '/users', role: 'admin' }
     ]
   }),
   computed: {
@@ -69,47 +59,18 @@ const app = new Vue({
     })
   },
   methods: {
-    editUser () {
-      this.editingUser = true
-      this.$nextTick(this.$refs.email.focus)
-    },
-    updateUser () {
-      this.updatingUser = true
-      this.$store.dispatch(actions.UPDATE_USER, this.user).then(response => {
-        this.showMessage('User modified ok!')
-      }).catch(error => {
-        console.dir(error)
-        this.showError(error)
-      }).then(() => {
-        this.editingUser = false
-        this.updatingUser = false
-      })
-    },
-    updateEmail (email) {
-      this.$store.commit(mutations.USER, {...this.user, email})
-    },
-    updateName (name) {
-      this.$store.commit(mutations.USER, {...this.user, name})
-    },
-    toogleRightDrawer () {
-      this.drawerRight = !this.drawerRight
-    },
     checkRoles (item) {
-      if (item.role) {
-        return this.$store.getters.roles.find(function (role) {
-          return role == item.role // eslint-disable-line
-        })
+      if (item.role == this.$store.state.auth.user.role || !item.role) {
+        return true
       }
-      return true
+      return false
     },
     logout () {
-      this.logoutLoading = true
-      this.$store.dispatch(actions.LOGOUT).then(response => {
+      this.logoutLoading = true;
+      this.$store.dispatch(actions.LOGOUT).then(() => {
         window.location = '/'
-      }).catch(error => {
-        console.log(error)
-      }).then(() => {
-        this.logoutLoading = false
+      }).catch(() => {
+        window.location = '/'
       })
     },
     menuItemSelected (item) {
@@ -120,17 +81,6 @@ const app = new Vue({
           window.location.href = item.href
         }
       }
-    },
-    changePassword () {
-      this.changingPassword = true
-      this.$store.dispatch(actions.REMEMBER_PASSWORD, this.user.email).then(response => {
-        this.showMessage(`Email sent to change password`)
-      }).catch(error => {
-        console.dir(error)
-        this.showError(error)
-      }).then(() => {
-        this.changingPassword = false
-      })
     }
   }
 });

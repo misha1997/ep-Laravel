@@ -71,7 +71,7 @@
             </v-container>
           </v-card-text>
 
-          <v-card-actions>
+          <v-card-actions v-show="$store.state.auth.user.role == 'admin'">
             <v-spacer></v-spacer>
             <v-btn color="blue darken-1" flat @click="close">Відміна</v-btn>
             <v-btn color="blue darken-1" type="submit" flat>Зберегти</v-btn>

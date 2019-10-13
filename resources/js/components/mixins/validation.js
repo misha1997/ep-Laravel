@@ -24,26 +24,23 @@ export default {
       isNumber: [
         v => _.isNumber(parseInt(v)) || 'Введіть будь ласка число'
       ],
-        passwordRules: [
-            v => !!v || 'Обов\'язкове поле',
-            v => String(v).length >= 8 || 'Не менше 8 символів'
-        ],
-        repeatPasswordRules: [
-            v => !!v || 'Обов\'язкове поле',
-            v => v == this.editedItem.password || `Не вірний пароль`
-        ],
-        oldPasswordRules: [
-            v => !!v || 'Обов\'язкове поле'
-        ],
-        newPasswordRules: [
-            v => !!v || 'Обов\'язкове поле',
-            v => String(v).length >= 8 || 'Не менше 8 символів',
-            v => v != this.editedItem.oldPassword || `Такий пароль вже існує`
-        ],
-        repeatNewPasswordRules: [
-            v => !!v || 'Обов\'язкове поле',
-            v => v == this.editedItem.newPassword || `Не вірний пароль`
-        ]
+      passwordRules: [
+          v => !!v || 'Обов\'язкове поле',
+          v => String(v).length >= 8 || 'Не менше 8 символів'
+      ],
+      repeatPasswordRules: [
+          v => !!v || 'Обов\'язкове поле',
+          v => v == this.editedItem.password || `Не вірний пароль`
+      ],
+      newPasswordRules: [
+          v => !!v || 'Обов\'язкове поле',
+          v => String(v).length >= 8 || 'Не менше 8 символів',
+          v => v != this.editedItem.oldPassword || `Такий пароль вже існує`
+      ],
+      repeatNewPasswordRules: [
+          v => !!v || 'Обов\'язкове поле',
+          v => v == this.editedItem.newPassword || `Не вірний пароль`
+      ]
     }
   }
 }

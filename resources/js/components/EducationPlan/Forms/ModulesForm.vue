@@ -96,12 +96,13 @@
   import {EventBus} from "../../../event-bus";
 
   import validation from '../../mixins/validation';
+  import withSnackbar from '../../mixins/withSnackbar';
 
   const ROMAN_NUMBERS = ["I", "II", "III", "IV"]
 
   export default {
 
-    mixins: [validation],
+    mixins: [validation, withSnackbar],
 
     data(){
       return {
@@ -207,7 +208,6 @@
         }
       },
 
-
       сourseWorkValid() {
         var course_work = _.filter(this.controlsPlan, {
           semester: Math.ceil(this.moduleNumber/2)
@@ -273,7 +273,7 @@
         });
 
         let formattedData = _.map(data, (item) => {
-          return{
+          return {
             "education_item_id": this.educationItemId,
             "module_number": item.module_number,
             "value": item.value,
@@ -282,18 +282,18 @@
             "semester" : Math.ceil(item.module_number/2)
           }
         });
-        axios.post('distribution-of-hours', {
+        axios.post('/distribution-of-hours', {
           educationItemId: this.educationItemId,
           data: formattedData
         })
-          .then((response) => {
-            this.updateDistributionOfHours({educationItemId: this.educationItemId, data: response.data});
-            this.dialog = false;
-          })
-          .catch((err) => {
-            console.log(err);
-          })
-
+        .then((response) => {
+          this.updateDistributionOfHours({educationItemId: this.educationItemId, data: response.data});
+          this.dialog = false;
+          this.showMessage("Збережено");
+        })
+        .catch((err)=>{
+          this.showError(err);
+        })
       }
     },
 

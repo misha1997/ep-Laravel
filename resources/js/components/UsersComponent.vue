@@ -72,9 +72,6 @@
                   </v-flex>
                   <v-flex xs12 v-else>
                     <v-flex xs12>
-                      <v-text-field v-model="editedItem.oldPassword" label="Старий пароль" type="password" :rules="oldPasswordRules"></v-text-field>
-                    </v-flex>
-                    <v-flex xs12>
                       <v-text-field v-model="editedItem.newPassword" label="Новий пароль" type="password" :rules="newPasswordRules"></v-text-field>
                     </v-flex>
                     <v-flex xs12>
@@ -135,21 +132,17 @@
   import crud from './mixins/crud';
   import validation from './mixins/validation';
 
-  export default{
+  export default {
 
     mixins: [validation, crud],
 
-    data(){
-      return{
-
+    data() {
+      return {
         apiUrl: 'user',
-
         primaryKey: 'id',
 
         universities: [],
-
         departments: [],
-
         emails: [],
 
         roles: [
@@ -203,7 +196,7 @@
       },
 
       getRequestId(){
-        return this.editedItem.user_id;
+        return this.editedItem.id;
       }
     },
     methods: {
@@ -220,7 +213,7 @@
       },
 
       fetchSubDivisions(){
-        axios.get('subdivision')
+        axios.get('/subdivision')
           .then((response)=>{
             this.universities = _.map(response.data, (item)=>{
               return{
@@ -229,13 +222,10 @@
               }
             });
           })
-          .catch((err)=>{
-            console.log(err);
-          })
       },
 
       getDepartments(){
-        axios.get('department/'+this.editedItem.subdivision_id)
+        axios.get('/department/'+this.editedItem.subdivision_id)
           .then((response)=>{
             this.departments = _.map(response.data, (item)=>{
               return {
@@ -243,9 +233,6 @@
                 name: item.name
               }
             });
-          })
-          .catch((err)=>{
-            console.log(err);
           })
       },
 
@@ -255,9 +242,6 @@
             for(let i = 0; i < response.data.length; i++) {
               this.emails.push(response.data[i].email)
             }
-          })
-          .catch((err)=>{
-            console.log(err);
           })
       }
     }

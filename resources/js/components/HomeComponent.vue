@@ -5,7 +5,7 @@
       <v-toolbar-title>Навчальні плани</v-toolbar-title>
       <v-spacer></v-spacer>
       <v-dialog v-model="dialog" max-width="600px">
-        <v-btn slot="activator" icon color="primary" dark class="mb-2"> <v-icon title="Додати">add</v-icon></v-btn>
+        <v-btn slot="activator" icon color="primary" v-if="$store.state.auth.user.role == 'admin'" dark class="mb-2"> <v-icon title="Додати">add</v-icon></v-btn>
         <v-form ref="form" @submit.prevent="save()">
           <v-card>
             <v-card-title>
@@ -30,7 +30,7 @@
                       required
                     ></v-select>
                   </v-flex>
-                  <v-flex xs12 v-if="departments.length > 0">
+                  <v-flex xs12 v-if="isDepartments">
                     <v-select
                       :rules="requiredField"
                       :items="departments"
@@ -118,7 +118,7 @@
       rows-per-page-text="Кількість рядків на сторінці"
       class="elevation-1"
     >
-      <template slot="items" slot-scope="props"
+      <template slot="items" slot-scope="props" v-if="filterPlan(props.item)"
       >
         <td>{{ props.item.name }}</td>
         <td>{{ props.item.departments.name }}</td>
@@ -131,6 +131,7 @@
             title="Норми котролю"
             small
             class="mr-2"
+            v-if="$store.state.auth.user.role == 'admin'"
             @click="editControl(props.item)"
           >
             widgets
@@ -141,6 +142,7 @@
             small
             class="mr-2"
             @click="deleteItem(props.item)"
+            v-if="filterPlanButton(props.item)"
           >
             delete
           </v-icon>
@@ -150,6 +152,7 @@
             small
             class="mr-2"
             @click="editItem(props.item)"
+            v-if="filterPlanButton(props.item)"
           >
             edit
           </v-icon>
@@ -212,34 +215,34 @@
         ],
 
         editedItem: {
-          user_id: 1,
-          name: 'test',
-          subdivision_id: 1,
-          department_id: 1,
-          qualification: 'Бакалавр',
-          discipline: 'Галузь знань',
-          training_period: 'Рік прийому',
-          specialty: 'Спеціальність',
-          specialization: 'Спеціалізація',
-          educational_program: 'Освітня програма',
-          educational_level: 'Освітній (освітньо-науковий) рівень',
-          form_study: 'Форма навчання',
-          year: 2019
+          user_id: this.$store.state.auth.user.id,
+          name: '',
+          subdivision_id: 0,
+          department_id: 0,
+          qualification: '',
+          discipline: '',
+          training_period: '',
+          specialty: '',
+          specialization: '',
+          educational_program: '',
+          educational_level: '',
+          form_study: '',
+          year: null
         },
         defaultItem: {
-          user_id: 1,
-          name: 'test',
-          subdivision_id: 1,
-          department_id: 1,
-          qualification: 'Бакалавр',
-          discipline: 'Галузь знань',
-          training_period: 'Рік прийому',
-          specialty: 'Спеціальність',
-          specialization: 'Спеціалізація',
-          educational_program: 'Освітня програма',
-          educational_level: 'Освітній (освітньо-науковий) рівень',
-          form_study: 'Форма навчання',
-          year: 2019
+          user_id: this.$store.state.auth.user.id,
+          name: '',
+          subdivision_id: 0,
+          department_id: 0,
+          qualification: '',
+          discipline: '',
+          training_period: '',
+          specialty: '',
+          specialization: '',
+          educational_program: '',
+          educational_level: '',
+          form_study: '',
+          year: null
         }
       }
     },
@@ -255,6 +258,9 @@
       },
       getRequestId(){
         return this.editedItem.id;
+      },
+      isDepartments(){
+        return !_.isEmpty(this.departments);
       }
     },
 
@@ -271,19 +277,19 @@
       },
 
       filterPlan(item) {
-        if(this.$store.state.role == 'admin') {
+        if(this.$store.state.auth.user.role == 'admin') {
           return true
-        } else if (this.$store.state.role == 'repres_omu') {
-          return this.$store.state.department == item.department_id
+        } else if (this.$store.state.auth.user.role == 'repres_omu') {
+          return this.$store.state.auth.user.department_id == item.department_id
         } else {
-          return item.user_id == this.$store.state.user || item.status == 'created' && this.$store.state.department == item.department_id
+          return item.user_id == this.$store.state.auth.user.id || item.status == 'created' && this.$store.state.auth.user.department_id == item.department_id
         }
       },
       filterPlanButton(item) {
-        if(this.$store.state.role == 'admin') {
+        if(this.$store.state.auth.user.role == 'admin') {
           return true
         } else {
-          return item.status != 'created' && this.$store.state.role != 'admin'
+          return item.status != 'created' && this.$store.state.auth.user.role != 'admin'
         }
       },
 

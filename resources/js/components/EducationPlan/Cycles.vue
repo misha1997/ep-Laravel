@@ -11,8 +11,8 @@
 
     </v-data-table>
 
-    <v-btn v-if="$store.state.role == 'admin'" color="info" class="mx-0" @click="addSubject()">Додати дисципліну</v-btn>
-    <v-btn v-if="status != 'created' && $store.state.role != 'admin'" color="info" class="mx-0" @click="addSubject()">Додати дисципліну</v-btn>
+    <v-btn v-if="$store.state.auth.user.role == 'admin'" color="info" class="mx-0" @click="addSubject()">Додати дисципліну</v-btn>
+    <v-btn v-if="status != 'Шаблон' && $store.state.auth.user.role != 'admin'" color="info" class="mx-0" @click="addSubject()">Додати дисципліну</v-btn>
   </div>
 </template>
 
@@ -73,12 +73,12 @@
       }),
 
       addSubject(){
-        axios.get(`cycles/${this.cycles.cycles_id}`)
+        axios.get(`/cycle/${this.cycle.cycles_id}`)
           .then((response)=>{
             EventBus.$emit('toggle-item-form', _.sumBy(this.stageItems, (item) => { return (item.choice == 0) ? item.credits : 0 }), response.data[0].credits);
             this.createEducationItemCycle({
-              "cycles_id" : this.cycles.cycles_id,
-              "fixed" : (this.status == 'created') ? 1 : 0
+              "cycles_id" : this.cycle.cycles_id,
+              "fixed" : (this.status == 'Шаблон') ? 1 : 0
               });
           })
       }

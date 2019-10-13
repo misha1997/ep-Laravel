@@ -24,7 +24,7 @@ class CreateEducationItemsTable extends Migration
             $table->integer('credits');
             $table->integer('lectures')->nullable()->default(0);
             $table->integer('laboratories')->nullable()->default(0);
-            $table->integer('choice')->default(0);
+            $table->integer('choice')->nullable()->default(0);
             $table->integer('fixed')->nullable()->default(1);
             $table->timestamps();
         });

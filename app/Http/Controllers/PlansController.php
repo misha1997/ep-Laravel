@@ -214,6 +214,7 @@ class PlansController extends Controller
             $newHours->value = $request->data[$i]['value'];
             $newHours->save();
         }
+        return response()->json(DistributionHours::where('education_item_id', $request->educationItemId)->get());
     }
 
     function postPlanControls(Request $request) {

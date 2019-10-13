@@ -18,18 +18,21 @@ Route::post('plan-items/update-learning-plan/{id}/', 'PlansController@updateLear
 Route::post('distribution-of-hours', 'PlansController@postHoursItems');
 
 // Цикли
+Route::get('cycle/{id}/', 'CyclesController@getCyclesId');
 Route::get('cycle', 'CyclesController@getCycles');
 Route::post('cycle', 'CyclesController@postCycles');
 Route::post('cycle/{id}/', 'CyclesController@putCycles');
 Route::delete('cycle/{id}/', 'CyclesController@deleteCycles');
 
 // Категорії
+Route::get('category/{id}/', 'CategoriesController@getCategoriesId');
 Route::get('category', 'CategoriesController@getCategories');
 Route::post('category', 'CategoriesController@postCategories');
 Route::post('category/{id}/', 'CategoriesController@putCategories');
 Route::delete('category/{id}/', 'CategoriesController@deleteCategories');
 
 // Під категорії
+Route::get('sub-category/{id}/', 'SubCategoriesController@getSubCategoriesId');
 Route::get('sub-category', 'SubCategoriesController@getSubCategories');
 Route::post('sub-category', 'SubCategoriesController@postSubCategories');
 Route::post('sub-category/{id}/', 'SubCategoriesController@putSubCategories');

@@ -13,11 +13,31 @@
             small
             class="mr-2"
             @click="distributionOfLearningForm(data.item.education_item_id)"
+            v-if="isDistributionOfHours && $store.state.auth.user.role == 'admin'"
+          >
+          school
+          </v-icon>
+          <v-icon
+            title="Лекції/Лабораторні"
+            small
+            class="mr-2"
+            @click="distributionOfLearningForm(data.item.education_item_id)"
+            v-if="isDistributionOfHours && $store.state.auth.user.role != 'admin' && data.item.fixed == 0"
           >
           school
           </v-icon>
 
           <v-icon
+            v-if="$store.state.auth.user.role == 'admin'"
+            title="Заповнити данні розподілу по модулям" 
+            small
+            class="mr-2"
+            @click="modulesForm(data.item.education_item_id)"
+          >
+          today
+          </v-icon>
+          <v-icon
+            v-if="$store.state.auth.user.role != 'admin' && data.item.fixed == 0"
             title="Заповнити данні розподілу по модулям" 
             small
             class="mr-2"
@@ -27,6 +47,15 @@
           </v-icon>
 
           <v-icon
+            v-if="$store.state.auth.user.role == 'admin'"
+            title="Видалити"
+            small
+            @click="deleteItem(data.item)"
+          >
+          delete
+          </v-icon>
+          <v-icon
+            v-if="$store.state.auth.user.role != 'admin' && data.item.fixed == 0"
             title="Видалити"
             small
             @click="deleteItem(data.item)"
@@ -41,11 +70,11 @@
   import {mapMutations, mapGetters} from 'vuex';
 
   import { EventBus } from '../../../event-bus.js';
-   import snackbar from '../../mixins/withSnackbar';
+  import withSnackbar from '../../mixins/withSnackbar';
 
   export default {
 
-    mixins: [snackbar],
+    mixins: [withSnackbar],
 
     props: {
       data: {
@@ -62,16 +91,12 @@
     },
 
     computed: {
-      ...mapGetters({
-        'snackbarTimeout': 'snackbarTimeout'
-      }),
-
       getDistributionOfHours(){
         return this.data.item.hours;
       },
 
       isDistributionOfHours(){
-        return this.hours != null;
+        return this.getDistributionOfHours.length > 0;
       },
 
       amountOfHours(){
@@ -88,7 +113,6 @@
 
     methods: {
       ...mapMutations({
-        'updateEducationItem': 'plan/updateEducationItem',
         'removeEducationItem': 'plan/removeEducationItem'
       }),
 
@@ -112,7 +136,7 @@
 
       modulesForm(educationItemId){ 
 
-        axios.get('plan-items/'+this.data.item.education_plans_id).then((res) => {
+        axios.get('/plan-items/'+this.data.item.education_plans_id).then((res) => {
           var controls = []
           res.data.educationItems.forEach(elem => {
             elem.hours.forEach(hour => {

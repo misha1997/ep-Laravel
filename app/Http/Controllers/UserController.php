@@ -14,7 +14,7 @@ class UserController extends Controller
         return response()->json($data);
     }
 
-    function postUsers() {
+    function postUsers(Request $request) {
         $data = new User;
         $data->email = $request->email;
         $data->name = $request->name;
@@ -31,12 +31,11 @@ class UserController extends Controller
         $data->name = $request->name;
         $data->surname = $request->surname;
         $data->role = $request->role;
-        $data->department_id = $request->department_id;
-        $data->password = Hash::make($request->password);
+        $data->password = Hash::make($request->newPassword);
         $data->save();
     }
 
     function deleteUsers($id) {
-        $data = User::find($id);
+        User::find($id)->delete();
     }
 }
