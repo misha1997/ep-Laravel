@@ -29,7 +29,7 @@ class CreatePlanControlsTable extends Migration
 
         Schema::table('plan_controls', function (Blueprint $table) {
             $table->index('id');
-            $table->foreign('id')->references('id')->on('education_plans');
+            $table->foreign('id')->references('id')->on('education_plans')->onDelete('cascade');
         });
     }
 

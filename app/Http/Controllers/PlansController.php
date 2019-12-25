@@ -27,6 +27,7 @@ class PlansController extends Controller
         $data->department_id = $request->plan['department_id'];
         $data->name = $request->plan['name'].' - клон';
         $data->year = $request->plan['year'];
+        $data->status = "Клон";
         $data->qualification = $request->plan['qualification'];
         $data->discipline = $request->plan['discipline'];
         $data->specialty = $request->plan['specialty'];
@@ -181,7 +182,7 @@ class PlansController extends Controller
         $data->save();
     }
     function deletePlans($id) {
-        $data = Plans::find($id);
+        Plans::find($id)->delete();
     }
 
     function deletePlanItems($id) {

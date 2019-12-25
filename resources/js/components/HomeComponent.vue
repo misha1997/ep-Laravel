@@ -282,14 +282,14 @@
         } else if (this.$store.state.auth.user.role == 'repres_omu') {
           return this.$store.state.auth.user.department_id == item.department_id
         } else {
-          return item.user_id == this.$store.state.auth.user.id || item.status == 'created' && this.$store.state.auth.user.department_id == item.department_id
+          return item.user_id == this.$store.state.auth.user.id || item.status == 'Шаблон' && this.$store.state.auth.user.department_id == item.department_id
         }
       },
       filterPlanButton(item) {
         if(this.$store.state.auth.user.role == 'admin') {
           return true
         } else {
-          return item.status != 'created' && this.$store.state.auth.user.role != 'admin'
+          return item.status != 'Шаблон' && this.$store.state.auth.user.role != 'admin'
         }
       },
 

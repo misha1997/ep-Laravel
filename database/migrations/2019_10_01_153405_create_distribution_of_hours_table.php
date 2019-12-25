@@ -27,7 +27,7 @@ class CreateDistributionOfHoursTable extends Migration
 
         Schema::table('distribution_of_hours', function (Blueprint $table) {
             $table->index('education_item_id');
-            $table->foreign('education_item_id')->references('education_item_id')->on('education_items');
+            $table->foreign('education_item_id')->references('education_item_id')->on('education_items')->onDelete('cascade');
         });
     }
 

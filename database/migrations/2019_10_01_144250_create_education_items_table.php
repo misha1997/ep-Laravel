@@ -35,11 +35,11 @@ class CreateEducationItemsTable extends Migration
             $table->index('cycles_id');
             $table->index('education_plans_id');
             $table->index('subject_id');
-            $table->foreign('sub_category_id')->references('sub_category_id')->on('sub_categories');
-            $table->foreign('category_id')->references('category_id')->on('categories');
-            $table->foreign('cycles_id')->references('cycles_id')->on('cycles');
-            $table->foreign('education_plans_id')->references('id')->on('education_plans');
-            $table->foreign('subject_id')->references('subject_id')->on('subjects');
+            $table->foreign('sub_category_id')->references('sub_category_id')->on('sub_categories')->onDelete('cascade');
+            $table->foreign('category_id')->references('category_id')->on('categories')->onDelete('cascade');
+            $table->foreign('cycles_id')->references('cycles_id')->on('cycles')->onDelete('cascade');
+            $table->foreign('education_plans_id')->references('id')->on('education_plans')->onDelete('cascade');
+            $table->foreign('subject_id')->references('subject_id')->on('subjects')->onDelete('cascade');
         });
     }
 

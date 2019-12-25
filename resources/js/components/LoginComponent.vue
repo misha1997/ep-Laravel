@@ -11,22 +11,6 @@
                 <v-form ref="form" v-model="valid" lazy-validation>
                   <v-text-field prepend-icon="person" name="email" v-model="email" :rules="loginEmailRules" label="E-mail" type="text" required></v-text-field>
                   <v-text-field prepend-icon="lock" name="password" v-model="password" :rules="passwordRules" label="Пароль" type="password" required></v-text-field>
-            <v-card-actions>
-                <v-spacer></v-spacer>
-                <v-btn color="blue darken-1" flat @click.native="showRememberPassword = false">Tancar</v-btn>
-                <v-btn
-                        :loading="loading"
-                        flat
-                        :color="done ? 'green' : 'blue'"
-                        @click.native="rememberPassword"
-                >
-                    <v-icon v-if="!done">mail_outline</v-icon>
-                    <v-icon v-else>done</v-icon>
-                    &nbsp;
-                    <template v-if="!done">Send</template>
-                    <template v-else>Done</template>
-                </v-btn>
-            </v-card-actions>
                 </v-form>
               </v-card-text>
               <v-card-text class="pt-0">

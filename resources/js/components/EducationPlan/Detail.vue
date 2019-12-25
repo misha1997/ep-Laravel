@@ -1,23 +1,22 @@
 <template>
   <div class="mb-5">
     <v-toolbar dark color="primary mb-4">
-      <v-toolbar-title>{{ plan.name }}</v-toolbar-title>
+      <v-toolbar-title>{{ plan.name + " " + $store.state.auth.user.role }}</v-toolbar-title>
       <v-spacer></v-spacer>
     </v-toolbar>
 
     <distributionOfLearning></distributionOfLearning>
     <creation-item></creation-item>
     <modules-form></modules-form>
-
     <v-btn color="info" class="mx-0" @click="viewHome('/')">Перейти до роботи з планами</v-btn>
     <v-btn color="info" class="mx-0" @click="openTable()">Переглянути</v-btn>
-    <v-btn color="info" class="mx-0" v-if="status == 'created'" @click="clonePlan()">Створити план за шаблоном</v-btn>
-    <v-btn color="info" class="mx-0" v-if="status == 'cloned'" @click="clonePlan()">Зробити копію плану</v-btn>
+    <v-btn color="info" class="mx-1 right" v-if="plan.status == 'Шаблон'" @click="clonePlan()">Створити план за шаблоном</v-btn>
+    <v-btn color="info" class="mx-0 right" v-if="plan.status == 'Клон'" @click="clonePlan()">Зробити копію плану</v-btn>
 
-    <v-btn v-if="status != 'created' && $store.state.role == 'repres_depart'" color="info right" class="mx-0" @click="sendVerify()">Відправити на верифікацію</v-btn>
+    <v-btn v-if="plan.status != 'Шаблон' && $store.state.auth.user.role == 'repres_depart'" color="info right" class="mx-1" @click="sendVerify()">Відправити на верифікацію</v-btn>
 
-    <v-btn v-if="status == 'on verification' && $store.state.role == 'repres_omu'" color="info right" class="mx-1" @click="verify()">Підтвердити</v-btn>
-    <v-btn v-if="status == 'on verification' && $store.state.role == 'repres_omu'" color="info right" class="mx-1" @click="refinement()">Відправити на доопрацювання</v-btn>
+    <v-btn v-if="plan.status == 'На перевірці' && $store.state.auth.user.role == 'repres_omu'" color="info right" class="mx-1" @click="verify()">Підтвердити</v-btn>
+    <v-btn v-if="plan.status == 'На перевірці' && $store.state.auth.user.role == 'repres_omu'" color="info right" class="mx-1" @click="refinement()">Відправити на доопрацювання</v-btn>
 
     <div v-for="cycles in data" :key="cycles.cycles_id" class="mt-4">
       <h3 class="text-md-center">{{ cycles.name.toUpperCase() }}</h3>
