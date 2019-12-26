@@ -1,7 +1,7 @@
 <template>
   <div class="mb-5">
     <v-toolbar dark color="primary mb-4">
-      <v-toolbar-title>{{ plan.name + " " + $store.state.auth.user.role }}</v-toolbar-title>
+      <v-toolbar-title>{{ plan.name }}</v-toolbar-title>
       <v-spacer></v-spacer>
     </v-toolbar>
 
