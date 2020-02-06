@@ -51,7 +51,7 @@
                     <v-text-field 
                       v-model="item.value" 
                       type="number" min="0"
-                      @click="activMod = i; moduleNumber = item.module_number;"
+                      @click="activMod = i; moduleNumber = item.module_number"
                       :label="item.label"
                     >
                     </v-text-field>
