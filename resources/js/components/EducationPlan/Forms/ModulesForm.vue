@@ -21,6 +21,10 @@
               Кількість іспитів в семестрі вичерпана
             </v-alert>
 
+            <v-alert :value="formControlIndividualValid" type="warning">
+              Форма контролю та індивідуальні завдання повинні бути обрані
+            </v-alert>
+
             <v-alert :value="validator" type="warning">
               Кількість годин повинна бути в діапазоні від {{ Math.ceil((credits*30)/32) }} до {{ Math.floor((credits*30)/8) }}
             </v-alert>
@@ -47,7 +51,7 @@
                     <v-text-field 
                       v-model="item.value" 
                       type="number" min="0"
-                      @click="activMod = i; moduleNumber = item.module_number"
+                      @click="activMod = i; moduleNumber = item.module_number;"
                       :label="item.label"
                     >
                     </v-text-field>
@@ -82,7 +86,7 @@
           <v-card-actions>
             <v-spacer></v-spacer>
             <v-btn color="blue darken-1" flat @click="close">Відміна</v-btn>
-            <v-btn color="blue darken-1" type="submit" flat v-if="!validator">Зберегти</v-btn>
+            <v-btn color="blue darken-1" type="submit" flat v-if="!validator && !formControlIndividualValid">Зберегти</v-btn>
           </v-card-actions>
         </v-card>
       </v-form>
@@ -92,7 +96,7 @@
 
 <script>
   import {mapGetters, mapMutations} from 'vuex';
-
+  
   import {EventBus} from "../../../event-bus";
 
   import validation from '../../mixins/validation';
@@ -152,6 +156,17 @@
     },
 
     computed: {
+      formControlIndividualValid() {
+          var dd = _.filter(this.data.filter((data) => {return data.module_number == Math.ceil(this.moduleNumber)}));
+          console.log(dd);
+          for (let j = 0; j < dd.length; j++) {
+            if (dd[j].form_control == "" || dd[j].individual_tasks == "") {
+              return true
+            } else {
+              return false
+            }
+          }
+      },
       examValid() {
         var exams = _.filter(this.controlsPlan, {
           semester: Math.ceil(this.moduleNumber/2)
@@ -168,7 +183,8 @@
               examCount++
             }
           }
-          var dd = this.data.filter((data) => {return data.semester == Math.ceil(this.moduleNumber/2)})
+          var dd = this.data.filter((data) => {return data.semester == Math.ceil(this.moduleNumber/2)});
+
           for (let i = 0; i < dd.length; i++){
             if(dd[i].form_control == 'exam') {
               examCount++
@@ -196,7 +212,7 @@
               сontrolwork++
             }
           }
-          var dd = this.data.filter((data) => {return data.semester == Math.ceil(this.moduleNumber/2)})
+          var dd = this.data.filter((data) => {return data.semester == Math.ceil(this.moduleNumber/2)});
           for (let i = 0; i < dd.length; i++){
             if(dd[i].individual_tasks == 'сontrolwork') {
               сontrolwork++
@@ -224,7 +240,7 @@
               сoursework++
             }
           }
-          var dd = this.data.filter((data) => {return data.semester == Math.ceil(this.moduleNumber/2)})
+          var dd = this.data.filter((data) => {return data.semester == Math.ceil(this.moduleNumber/2)});
           for (let i = 0; i < dd.length; i++){
             if(dd[i].individual_tasks == 'сoursework') {
               сoursework++
@@ -267,11 +283,9 @@
       },
 
       save(){
-
         let data = _.filter(this.data, (item) => {
           return item.value !== '' && _.isNumber(parseInt(item.value));
         });
-
         let formattedData = _.map(data, (item) => {
           return {
             "education_item_id": this.educationItemId,
@@ -289,7 +303,7 @@
         .then((response) => {
           this.updateDistributionOfHours({educationItemId: this.educationItemId, data: response.data});
           this.dialog = false;
-          this.showMessage("Збережено");
+          this.showMessage('Збережено');
         })
         .catch((err)=>{
           this.showError(err);
